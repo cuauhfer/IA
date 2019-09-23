@@ -1,0 +1,202 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box; }
+
+body {
+  font-family: sans-serif; }
+
+header {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.9); }
+  header input {
+    display: none; }
+  header label {
+    font-size: 36px;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    padding: 0 20px; }
+    header label i {
+      font-size: 30px; }
+    header label:hover {
+      transform: scale(1.05); }
+  header button {
+    background: transparent;
+    border: 0;
+    color: white;
+    height: 100%;
+    padding: 0 20px;
+    font-size: 28px;
+    cursor: pointer; }
+    header button:hover {
+      transform: scale(1.05); }
+
+.spacer {
+  width: 100%;
+  height: 60px; }
+
+main {
+  width: 100%; }
+  main .ajustes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: wrap; }
+    main .ajustes .unColor {
+      width: 50%;
+      display: flex;
+      justify-content: space-between;
+      flex-flow: wrap;
+      padding: 25px; }
+      main .ajustes .unColor label {
+        width: 20%;
+        height: 30px;
+        font-size: 16px;
+        padding: 5px;
+        cursor: pointer; }
+      main .ajustes .unColor input {
+        width: 30%;
+        height: 30px;
+        background: transparent;
+        border: 0;
+        padding: 5px;
+        font-size: 16px;
+        cursor: pointer; }
+        main .ajustes .unColor input[type="text"] {
+          border-bottom: 2px solid black; }
+          main .ajustes .unColor input[type="text"]:focus {
+            outline: none !important;
+            outline-width: 0 !important;
+            border-bottom: 2px solid blue; }
+        main .ajustes .unColor input[type="color"] {
+          height: 40px; }
+          main .ajustes .unColor input[type="color"]:focus {
+            outline: none !important;
+            outline-width: 0 !important; }
+  main .div-colores {
+    width: 100%;
+    display: flex;
+    justify-content: center; }
+    main .div-colores button {
+      width: 150px;
+      height: 50px;
+      background: rgba(0, 0, 0, 0.85);
+      font-size: 20px;
+      color: white;
+      cursor: pointer; }
+      main .div-colores button:hover {
+        transform: scale(1.05);
+        background: rgba(0, 0, 0, 0.65); }
+  main .detalles {
+    width: 30%;
+    visibility: hidden;
+    display: none;
+    font-size: 16px;
+    margin: 25px;
+    margin-left: 5%;
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    border-radius: 25px;
+    padding: 25px; }
+  main .matriz {
+    width: 50%;
+    display: flex;
+    flex-flow: wrap;
+    margin: 25px auto; }
+    main .matriz .elemento {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 5px;
+      border: 0.5px solid rgba(0, 0, 0, 0.25); }
+      main .matriz .elemento .x {
+        display: none; }
+      main .matriz .elemento .y {
+        display: none; }
+  main .player {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-flow: row wrap; }
+    main .player .character {
+      margin: 10px 1%;
+      width: 18%;
+      display: flex;
+      flex-flow: row wrap;
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 25px;
+      padding: 15px; }
+      main .player .character .character-part {
+        width: 40%;
+        margin: 5px auto;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: stretch; }
+        main .player .character .character-part select {
+          width: 100%;
+          height: 40px;
+          border: 0.5px solid rgba(0, 0, 0, 0.25);
+          border-radius: 5px;
+          font-size: 12px;
+          padding: 5px; }
+        main .player .character .character-part label {
+          width: 100%;
+          margin: 5px auto;
+          display: flex;
+          justify-content: center;
+          flex-flow: column wrap; }
+          main .player .character .character-part label span {
+            width: 100%;
+            padding-left: 10px; }
+          main .player .character .character-part label .picture-label {
+            width: 50px;
+            height: 50px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat; }
+        main .player .character .character-part input {
+          width: 100%;
+          height: 40px;
+          border: 0.5px solid rgba(0, 0, 0, 0.25);
+          border-radius: 5px;
+          font-size: 12px;
+          padding: 5px; }
+      main .player .character .btns {
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+        flex-flow: row wrap;
+        margin: 10px auto; }
+        main .player .character .btns .btn {
+          width: 45%;
+          height: 30px;
+          background: transparent;
+          border: 0.5px solid rgba(0, 0, 0, 0.25);
+          border-radius: 5px;
+          cursor: pointer; }
+          main .player .character .btns .btn:hover {
+            transform: scale(1.05); }
+        main .player .character .btns .select {
+          background: rgba(0, 0, 128, 0.75);
+          color: white; }
+          main .player .character .btns .select:hover {
+            background: rgba(0, 0, 128, 0.25); }
+        main .player .character .btns .play {
+          background: rgba(0, 128, 0, 0.75);
+          color: white; }
+          main .player .character .btns .play:hover {
+            background: rgba(0, 128, 0, 0.25); }
+        main .player .character .btns .delete {
+          background: rgba(128, 0, 0, 0.75);
+          color: white; }
+          main .player .character .btns .delete:hover {
+            background: rgba(128, 0, 0, 0.25); }

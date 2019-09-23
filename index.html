@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+  	<meta charset="utf-8">
+    <!-- FontAwesome -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="text/javascript" src="js/map.js"></script>
+    <title>IA E1</title>
+  </head>
+
+  <body>
+    <header id="header">
+      <label for="fileInput"><i class="fas fa-plus-circle"></i> Nuevo Mapa</label>
+      <input id="fileInput" name="fileInput" type="file" size="50" onchange="reset(this.files)">
+    </header>
+
+    <div class="spacer"></div>
+
+    <main>
+      <div class="ajustes" id="ajustes"></div>
+      <div class="detalles" id="detalles" style="display: none;">
+        <p>
+          Coordenada: <span id="labCoordenada"></span><br>
+          Terreno: <span id="labTerreno"></span><br>
+          Inicial: <span id="labInicial"></span><br>
+          Final: <span id="labFinal"></span><br>
+          Actual: <span id="labActual"></span><br>
+          Visitas: <span id="labVisitas"></span><br>
+        </p>
+      </div>
+      <div class="player" id="player"></div>
+      <div class="matriz" id="matriz"></div>
+    </main>
+
+  </body>
+</html>

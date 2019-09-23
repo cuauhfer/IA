@@ -1,0 +1,225 @@
+*
+  padding: 0
+  margin: 0
+  box-sizing: border-box
+
+body
+  font-family: sans-serif
+
+header
+  width: 100%
+  height: 50px
+  display: flex
+  flex-flow: row wrap
+  justify-content: space-around
+  background: rgba(0, 0, 0, 0.9)
+
+  input
+    display: none
+
+  label
+    font-size: 36px
+    color: white
+    text-align: center
+    cursor: pointer
+    padding: 0 20px
+    i
+      font-size: 30px
+    &:hover
+      transform: scale(1.05)
+
+  button
+    background: transparent
+    border: 0
+    color: white
+    height: 100%
+    padding: 0 20px
+    font-size: 28px
+    cursor: pointer
+    &:hover
+      transform: scale(1.05)
+    i
+      font-size: 30px
+
+.spacer
+  width: 100%
+  height: 60px
+
+main
+  width: 100%
+
+  .ajustes
+    width: 100%
+    display: flex
+    justify-content: space-between
+    flex-flow: wrap
+
+    .unColor
+      width: 50%
+      display: flex
+      justify-content: space-between
+      flex-flow: wrap
+      padding: 25px
+
+      label
+        width: 20%
+        height: 30px
+        font-size: 16px
+        padding: 5px
+        cursor: pointer
+
+      input
+        width: 30%
+        height: 30px
+        background: transparent
+        border: 0
+        padding: 5px
+        font-size: 16px
+        cursor: pointer
+
+        &[type="text"]
+          border-bottom: 2px solid black
+          &:focus
+            outline: none !important
+            outline-width: 0 !important
+            border-bottom: 2px solid blue
+
+        &[type="color"]
+          height: 40px
+          &:focus
+            outline: none !important
+            outline-width: 0 !important
+
+  .div-colores
+    width: 100%
+    display: flex
+    justify-content: center
+
+    button
+      width: 150px
+      height: 50px
+      background: rgba(0, 0, 0, 0.85)
+      font-size: 20px
+      color: white
+      cursor: pointer
+
+      &:hover
+        transform: scale(1.05)
+        background: rgba(0, 0, 0, 0.65)
+
+  .detalles
+
+    width: 30%
+    visibility: hidden
+    display: none
+    font-size: 16px
+    margin: 25px
+    margin-left: 5%
+    display: flex
+    border: 1px solid rgba(0,0,0,0.35)
+    border-radius: 25px
+    padding: 25px
+
+  .matriz
+    width: 50%
+    display: flex
+    flex-flow: wrap
+    margin: 25px auto
+
+    .elemento
+      display: flex
+      justify-content: center
+      align-items: center
+      height: 50px
+      background: rgba(0, 0, 0, 0.25)
+      border-radius: 5px
+      border: 0.5px solid rgba(0, 0, 0, 0.25)
+
+      .x
+        display: none
+
+      .y
+        display: none
+
+  .player
+    width: 100%
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    flex-flow: row wrap
+
+    .character
+      margin: 10px 1%
+      width: 18%
+      display: flex
+      flex-flow: row wrap
+      border: 1px solid rgba(0, 0, 0, 0.25)
+      border-radius: 25px
+      padding: 15px
+
+      .character-part
+        width: 40%
+        margin: 5px auto
+        display: flex
+        flex-flow: column wrap
+        justify-content: center
+        align-items: stretch
+        select
+          width: 100%
+          height: 40px
+          border: 0.5px solid rgba(0, 0, 0, 0.25)
+          border-radius: 5px
+          font-size: 12px
+          padding: 5px
+        label
+          width: 100%
+          margin: 5px auto
+          display: flex
+          justify-content: center
+          flex-flow: column wrap
+          span
+            width: 100%
+            padding-left: 10px
+          .picture-label
+            width: 50px
+            height: 50px
+            background-size: cover
+            background-position: center
+            background-repeat: no-repeat
+        input
+          width: 100%
+          height: 40px
+          border: 0.5px solid rgba(0, 0, 0, 0.25)
+          border-radius: 5px
+          font-size: 12px
+          padding: 5px
+      .btns
+        width: 80%
+        display: flex
+        justify-content: space-between
+        flex-flow: row wrap
+        margin: 10px auto
+        .btn
+          width: 45%
+          height: 30px
+          background: transparent
+          border: 0.5px solid rgba(0, 0, 0, 0.25)
+          border-radius: 5px
+          cursor: pointer
+          &:hover
+            transform: scale(1.05)
+        .select
+          background: rgba(0, 0, 128, 0.75)
+          color: white
+          &:hover
+            background: rgba(0, 0, 128, 0.25)
+        .play
+          background: rgba(0, 128, 0, 0.75)
+          color: white
+          &:hover
+            background: rgba(0, 128, 0, 0.25)
+        .delete
+          background: rgba(128, 0, 0, 0.75)
+          color: white
+          &:hover
+            background: rgba(128, 0, 0, 0.25)
