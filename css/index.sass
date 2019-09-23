@@ -46,6 +46,7 @@ header
   height: 60px
 
 main
+  position: relative
   width: 100%
 
   .ajustes
@@ -108,17 +109,34 @@ main
         background: rgba(0, 0, 0, 0.65)
 
   .detalles
-
-    width: 30%
-    visibility: hidden
-    display: none
+    z-index: 100
+    top: 5%
+    right: 5%
+    position: fixed
+    width: 20%
+    visibility: visible
+    display: flex
     font-size: 16px
     margin: 25px
     margin-left: 5%
     display: flex
+    background: rgba(255, 255, 255, 0.95)
     border: 1px solid rgba(0,0,0,0.35)
     border-radius: 25px
     padding: 25px
+
+    button
+      position: absolute
+      right: 25px
+      top: 25px
+      width: 25px
+      height: 25px
+      background: rgba(128, 0, 0, 0.75)
+      border-radius: 15px
+      color: white
+      &:hover
+        transform: scale(1.05)
+        background: rgba(128, 0, 0, 0.5)
 
   .matriz
     width: 50%
@@ -134,6 +152,7 @@ main
       background: rgba(0, 0, 0, 0.25)
       border-radius: 5px
       border: 0.5px solid rgba(0, 0, 0, 0.25)
+      cursor: pointer
 
       .x
         display: none

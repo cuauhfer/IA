@@ -48,7 +48,7 @@ function reset(files){
   document.getElementById("detalles").style.visibility = "hidden";
   loadFile(files);
   document.getElementById("player").innerHTML = "";
-  document.getElementById("addPersonaje").outerHTML = "";
+  document.getElementById("header").innerHTML = '<label for="fileInput"><i class="fas fa-plus-circle"></i> Nuevo Mapa</label><input id="fileInput" name="fileInput" type="file" size="50" onchange="reset(this.files)">';
 
   personajes = [];    // Personajes del juego
   personajesCant = 0;
@@ -342,7 +342,8 @@ function verDetalles(obj){
   var coorY = objUso.lastChild.textContent;
   var coor = matriz[coorY-1][coorX-1];
 
-  var content =   '<p>'+
+  var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
+                  '<p>'+
                     'Coordenada: <span id="labCoordenada">X: '+ coorX +' Y: '+ coorY +'  </span><br>'+
                     'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>'+
                     'Inicial: <span id="labInicial">'+ coor.inicial +'</span><br>'+
@@ -358,13 +359,16 @@ function verDetalles(obj){
                     'Actual: '+ coor.actual +'\n'+
                     'Visitas: '+ coor.visitados +'\n';
 
-  //detalle.style.display = "flex";
-  //detalle.innerHTML = content;
+  detalle.style.display = "block";
+  detalle.style.visibility = "visible";
+  detalle.innerHTML = content;
 
-  alert(alertContent);
+  //alert(alertContent);
 }
 
-
+function hideDetalles(){
+  document.getElementById("detalles").style.display = "none";
+}
 ////////////////////////////////////////////////////////////////////////////////
 //  Creación de los personajes
 ////////////////////////////////////////////////////////////////////////////////
@@ -440,3 +444,8 @@ function confirmCharacter(id){
   var person = new personaje(id, nombre, terrenos);
   personajes.push(person);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  Modal
+////////////////////////////////////////////////////////////////////////////////
