@@ -47,6 +47,12 @@ function reset(files){
                                                   '</p>';
   document.getElementById("detalles").style.visibility = "hidden";
   loadFile(files);
+  document.getElementById("player").innerHTML = "";
+  document.getElementById("addPersonaje").outerHTML = "";
+
+  personajes = [];    // Personajes del juego
+  personajesCant = 0;
+  personajesIndices = 0;
 }
 
 //______________________________________________________________________________Cargar .TXT en la matriz
