@@ -202,19 +202,19 @@ function saveColors(){
 //______________________________________________________________________________Imprimir el mapa
 function verMatriz(){
   var docMatriz = document.getElementById("matriz");
-
+  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
   for(var j = 0; j <= x; j++){
     if(j == 0){
       docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'> Y/X </div>";
     }
     else{
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + j +".</div>";
+      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + alpha[j] +".</div>";
     }
   }
   for(var i = 0; i < matriz.length; i++){
     docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + (i+1) +".</div>";
     for(var j = 0; j < matriz[i].length; j++){
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+(i+1)+"x"+(j+1)+"'>" + matriz[i][j] +"</div>";
+      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+alpha[j]+"x"+(i+1)+"'>" + matriz[i][j] +"</div>";
     }
   }
 
@@ -336,7 +336,7 @@ function convertirMatriz(){
 //______________________________________________________________________________Ver detalles de un elemento
 function verDetalles(obj){
   var detalle = document.getElementById("detalles");
-
+  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
   var objUso = document.getElementById(obj.id);
   var coorX = objUso.firstChild.textContent;
   var coorY = objUso.lastChild.textContent;
@@ -344,7 +344,7 @@ function verDetalles(obj){
 
   var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
                   '<p>'+
-                    'Coordenada: <span id="labCoordenada">X: '+ coorX +' Y: '+ coorY +'  </span><br>'+
+                    'Coordenada: <span id="labCoordenada">'+ alpha[coorX] + coorY +'  </span><br>'+
                     'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>'+
                     'Inicial: <span id="labInicial">'+ coor.inicial +'</span><br>'+
                     'Final: <span id="labFinal">'+ coor.final +'</span><br>'+
