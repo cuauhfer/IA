@@ -214,7 +214,7 @@ function verMatriz(){
   for(var i = 0; i < matriz.length; i++){
     docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + (i+1) +".</div>";
     for(var j = 0; j < matriz[i].length; j++){
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+alpha[j]+"x"+(i+1)+"'>" + matriz[i][j] +"</div>";
+      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+alpha[j+1]+(i+1)+"'>" + matriz[i][j] +"</div>";
     }
   }
 
