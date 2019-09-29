@@ -132,6 +132,7 @@ main {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-flow: row wrap;
       height: 50px;
       background: rgba(0, 0, 0, 0.25);
       border-radius: 5px;
@@ -141,6 +142,18 @@ main {
         display: none; }
       main .matriz .elemento .y {
         display: none; }
+      main .matriz .elemento .personaje {
+        width: 25px;
+        height: 25px;
+        user-select: none; }
+      main .matriz .elemento .Inicial {
+        width: 10px;
+        height: 10px;
+        user-select: none; }
+      main .matriz .elemento .final {
+        width: 10px;
+        height: 10px;
+        user-select: none; }
   main .player {
     width: 100%;
     display: flex;

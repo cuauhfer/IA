@@ -299,7 +299,8 @@ function verMatriz(){
   var cont = 0;
   for(var i = 0; i <= y; i++){
     for(var j = 0; j <= x; j++){
-      elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>"
+      elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>"+
+                                  "<div class='personaje'></div> <div class='inicial'></div><div class='final'></div>";
       cont++;
     }
   }
