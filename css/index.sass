@@ -138,6 +138,18 @@ main
         transform: scale(1.05)
         background: rgba(128, 0, 0, 0.5)
 
+    .point
+      position: relative
+      background: rgba(0, 0, 128, 0.75)
+      width: 75px
+      height: 25px
+      color: white
+      border-radius: 5px
+      margin: 25px 10px
+      &:hover
+        transform: scale(1.05)
+        background: rgba(0, 0, 128, 0.5)
+
   .matriz
     width: 50%
     display: flex
@@ -145,14 +157,48 @@ main
     margin: 25px auto
 
     .elemento
+      position: relative
       display: flex
       justify-content: center
       align-items: center
+      flex-flow: row wrap
       height: 50px
       background: rgba(0, 0, 0, 0.25)
       border-radius: 5px
       border: 0.5px solid rgba(0, 0, 0, 0.25)
       cursor: pointer
+
+      .start
+        position: absolute
+        left: 0
+        top: 0
+        width: 60%
+        z-index: 10
+
+      .end
+        position: absolute
+        right: 0
+        top: 0
+        width: 60%
+        z-index: 10
+
+      img
+        position: absolute
+        margin: auto
+        width: 40px
+        height: 40px
+        z-index: 25
+
+      .visitados
+        position: absolute
+        bottom: 0
+        left: 0
+        font-size: 14px
+        height: 15px
+        width: 100%
+        color: white
+        text-shadow: 2px 2px black
+        z-index: 50
 
       .x
         display: none

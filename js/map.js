@@ -7,10 +7,12 @@ var numeros = [];       // Almacena los indices y valores del terreno
 var personajes = [];    // Personajes del juego
 var personajesCant = 0;
 var personajesIndices = 0;
+var jugando = null;
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
-function casilla(id, nomTerreno, inicial, final, actual, visitados){
+function casilla(id, coor, nomTerreno, inicial, final, actual, visitados){
   this.id = id;
+  this.coordenada = coor;
   this.nomTerreno = nomTerreno;
   this.inicial = inicial;
   this.final = final;
@@ -22,6 +24,9 @@ function personaje(id, nombre, terrenos){
   this.id = id;
   this.nombre = nombre;
   this.terrenos = terrenos;
+  this.inicial = null;
+  this.final = null;
+  this.actual = null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -299,7 +304,7 @@ function verMatriz(){
   var cont = 0;
   for(var i = 0; i <= y; i++){
     for(var j = 0; j <= x; j++){
-      elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>"
+      elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>";
       cont++;
     }
   }
@@ -311,6 +316,7 @@ function verMatriz(){
 
 //______________________________________________________________________________Matriz de elementos
 function convertirMatriz(){
+  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
   var matrizAux = [];
   var filaAux = [];
   var visitados = [];
@@ -319,7 +325,8 @@ function convertirMatriz(){
     for(var j = 0; j < matriz[i].length; j++){
       for (var k = 0; k < numeros.length; k++) {
         if(matriz[i][j] == numeros[k][0]){
-          var arregloMatriz = new casilla(matriz[i][j], numeros[k][1], false, false, false, visitados);
+          var coorde = alpha[j+1] + (i+1);
+          var arregloMatriz = new casilla(matriz[i][j], coorde, numeros[k][1], false, false, false, visitados);
         }
       }
       filaAux.push(arregloMatriz);
@@ -352,18 +359,105 @@ function verDetalles(obj){
                     'Visitas: <span id="labVisitas"></span>'+ coor.visitados +'<br>'+
                   '</p>';
 
-  var alertContent ='Coordenada: X: '+ coorX +' Y: '+ coorY +' \n'+
-                    'Terreno: '+ coor.nomTerreno +'\n'+
-                    'Inicial: '+ coor.inicial +'\n'+
-                    'Final: '+ coor.final +'\n'+
-                    'Actual: '+ coor.actual +'\n'+
-                    'Visitas: '+ coor.visitados +'\n';
+  //var alertContent ='Coordenada: X: '+ coorX +' Y: '+ coorY +' \n'+
+  //                  'Terreno: '+ coor.nomTerreno +'\n'+
+  //                  'Inicial: '+ coor.inicial +'\n'+
+  //                  'Final: '+ coor.final +'\n'+
+  //                  'Actual: '+ coor.actual +'\n'+
+  //                  'Visitas: '+ coor.visitados +'\n';
+
+  if(jugando != null){
+    for (a in jugando.terrenos){
+      if(coor.id == jugando.terrenos[a][0] && jugando.terrenos[a][1] != ""){
+        content += '<button class="point" type="button" name="button" onclick="setInicial('+(coorY-1)+','+(coorX-1)+')">Inicial</button><button class="point" type="button" name="button" onclick="setFinal('+(coorY-1)+','+(coorX-1)+')">Final</button>';
+      }
+    }
+  }
 
   detalle.style.display = "block";
   detalle.style.visibility = "visible";
   detalle.innerHTML = content;
 
   //alert(alertContent);
+}
+
+function setInicial(y, x){
+  if(jugando.inicial != null){
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].inicial == true){
+          matriz[i][j].inicial = false;
+          matriz[i][j].actual = false;
+
+          var antobjUso = document.getElementById(matriz[i][j].coordenada);
+          var antcoorX = antobjUso.firstChild.innerHTML;
+          var antcoorY = antobjUso.lastChild.innerHTML;
+
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
+
+          antobjUso.innerHTML = antcont;
+        }
+      }
+    }
+  }
+
+  matriz[y][x].actual = true;
+  matriz[y][x].inicial = true;
+
+  jugando.inicial = matriz[y][x];
+  jugando.actual = matriz[y][x];
+
+  var objUso = document.getElementById(matriz[y][x].coordenada);
+  var coorX = objUso.firstChild.innerHTML;
+  var coorY = objUso.lastChild.innerHTML;
+
+  var cont = "<div class='x'>"+coorX+"</div>"+
+             '<div class="start"><img src="img/start.png" alt=""></div>'+
+             '<div class="end"><img src="" alt=""></div>'+
+             '<img src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
+             '<div class="visitados">1</div>'+
+             "<div class='y'>"+coorY+"</div>";
+
+  objUso.innerHTML = cont;
+}
+
+function setFinal(y, x){
+  if(jugando.final != null){
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].final == true){
+          matriz[i][j].final = false;
+
+          var antobjUso = document.getElementById(matriz[i][j].coordenada);
+          var antcoorX = antobjUso.firstChild.innerHTML;
+          var antcoorY = antobjUso.lastChild.innerHTML;
+
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
+
+          antobjUso.innerHTML = antcont;
+        }
+      }
+    }
+  }
+
+  matriz[y][x].final = true;
+
+  jugando.final = matriz[y][x];
+
+  var objUso = document.getElementById(matriz[y][x].coordenada);
+  var coorX = objUso.firstChild.innerHTML;
+  var coorY = objUso.lastChild.innerHTML;
+
+  var cont = "<div class='x'>"+coorX+"</div>"+
+             '<div class="start"><img src="" alt=""></div>'+
+             '<div class="end"><img src="img/finish.png" alt=""></div>'+
+             '<img src="" alt="">'+
+             '<div class="visitados"></div>'+
+             "<div class='y'>"+coorY+"</div>";
+
+  objUso.innerHTML = cont;
 }
 
 function hideDetalles(){
@@ -406,7 +500,7 @@ function newCharacter(){
 
     newPlayer += "          </div>";
     newPlayer += "          <div class='btns'>";
-    newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Confirmar</button>";
+    newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Jugar</button>";
     newPlayer += "            <button class='btn delete' type='button' id='delete-char" + personajesIndices + "' name='select-char' onClick='deleteCharacter("+personajesIndices+")'>Borrar</button>";
     newPlayer += "          </div>";
     newPlayer += "        </div>";
@@ -443,6 +537,7 @@ function confirmCharacter(id){
   }
   var person = new personaje(id, nombre, terrenos);
   personajes.push(person);
+  jugando = person;
 }
 
 
