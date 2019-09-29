@@ -369,7 +369,12 @@ function verDetalles(obj){
   if(jugando != null){
     for (a in jugando.terrenos){
       if(coor.id == jugando.terrenos[a][0] && jugando.terrenos[a][1] != ""){
-        content += '<button class="point" type="button" name="button" onclick="setInicial('+(coorY-1)+','+(coorX-1)+')">Inicial</button><button class="point" type="button" name="button" onclick="setFinal('+(coorY-1)+','+(coorX-1)+')">Final</button>';
+        if(coor.inicial == false && coor.final == false){
+          content += '<button class="point" type="button" name="button" onclick="setInicial('+(coorY-1)+','+(coorX-1)+')">Inicial</button>';
+        }
+        if(coor.inicial == false && coor.final == false){
+          content += '<button class="point" type="button" name="button" onclick="setFinal('+(coorY-1)+','+(coorX-1)+')">Final</button>';
+        }
       }
     }
   }
@@ -382,22 +387,21 @@ function verDetalles(obj){
 }
 
 function setInicial(y, x){
-  if(jugando.inicial != null){
-    for(var i = 0; i < matriz.length; i++){
-      for(var j = 0; j < matriz[i].length; j++){
-        if(matriz[i][j].inicial == true){
-          matriz[i][j].inicial = false;
-          matriz[i][j].actual = false;
 
-          var antobjUso = document.getElementById(matriz[i][j].coordenada);
-          var antcoorX = antobjUso.firstChild.innerHTML;
-          var antcoorY = antobjUso.lastChild.innerHTML;
+  for(var i = 0; i < matriz.length; i++){
+    for(var j = 0; j < matriz[i].length; j++){
+      if(matriz[i][j].inicial == true){
+        matriz[i][j].inicial = false;
+        matriz[i][j].actual = false;
 
-          var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
+        var antobjUso = document.getElementById(matriz[i][j].coordenada);
+        var antcoorX = antobjUso.firstChild.innerHTML;
+        var antcoorY = antobjUso.lastChild.innerHTML;
 
-          antobjUso.innerHTML = antcont;
-        }
+        var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                      "<div class='y'>"+antcoorY+"</div>";
+
+        antobjUso.innerHTML = antcont;
       }
     }
   }
@@ -420,24 +424,25 @@ function setInicial(y, x){
              "<div class='y'>"+coorY+"</div>";
 
   objUso.innerHTML = cont;
+  var detalle = document.getElementById("detalles");
+  detalle.style.display = "none";
 }
 
 function setFinal(y, x){
-  if(jugando.final != null){
-    for(var i = 0; i < matriz.length; i++){
-      for(var j = 0; j < matriz[i].length; j++){
-        if(matriz[i][j].final == true){
-          matriz[i][j].final = false;
 
-          var antobjUso = document.getElementById(matriz[i][j].coordenada);
-          var antcoorX = antobjUso.firstChild.innerHTML;
-          var antcoorY = antobjUso.lastChild.innerHTML;
+  for(var i = 0; i < matriz.length; i++){
+    for(var j = 0; j < matriz[i].length; j++){
+      if(matriz[i][j].final == true){
+        matriz[i][j].final = false;
 
-          var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
+        var antobjUso = document.getElementById(matriz[i][j].coordenada);
+        var antcoorX = antobjUso.firstChild.innerHTML;
+        var antcoorY = antobjUso.lastChild.innerHTML;
 
-          antobjUso.innerHTML = antcont;
-        }
+        var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                      "<div class='y'>"+antcoorY+"</div>";
+
+        antobjUso.innerHTML = antcont;
       }
     }
   }
@@ -458,6 +463,8 @@ function setFinal(y, x){
              "<div class='y'>"+coorY+"</div>";
 
   objUso.innerHTML = cont;
+  var detalle = document.getElementById("detalles");
+  detalle.style.display = "none";
 }
 
 function hideDetalles(){
@@ -525,7 +532,6 @@ function confirmCharacter(id){
   document.getElementById("select-char"+id).outerHTML = "";
   document.getElementById("delete-char"+id).outerHTML = "";
   var terrenos = [];
-  var id = personajes.length;
   var nombre = document.getElementById("picture"+id).value;
   document.getElementById("picture"+id).disabled = "true";
   for(var a = 0; a < numeros.length; a++){
@@ -538,6 +544,48 @@ function confirmCharacter(id){
   var person = new personaje(id, nombre, terrenos);
   personajes.push(person);
   jugando = person;
+
+  for(var i = 0; i < matriz.length; i++){
+    for(var j = 0; j < matriz[i].length; j++){
+      if(matriz[i][j].inicial == true){
+        matriz[i][j].inicial = false;
+
+        var antobjUso = document.getElementById(matriz[i][j].coordenada);
+        var antcoorX = antobjUso.firstChild.innerHTML;
+        var antcoorY = antobjUso.lastChild.innerHTML;
+
+        var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                      "<div class='y'>"+antcoorY+"</div>";
+
+        antobjUso.innerHTML = antcont;
+      }
+      if(matriz[i][j].actual == true){
+        
+        matriz[i][j].actual = false;
+
+        var antobjUso = document.getElementById(matriz[i][j].coordenada);
+        var antcoorX = antobjUso.firstChild.innerHTML;
+        var antcoorY = antobjUso.lastChild.innerHTML;
+
+        var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                      "<div class='y'>"+antcoorY+"</div>";
+
+        antobjUso.innerHTML = antcont;
+      }
+      if(matriz[i][j].final == true){
+        matriz[i][j].final = false;
+
+        var antobjUso = document.getElementById(matriz[i][j].coordenada);
+        var antcoorX = antobjUso.firstChild.innerHTML;
+        var antcoorY = antobjUso.lastChild.innerHTML;
+
+        var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                      "<div class='y'>"+antcoorY+"</div>";
+
+        antobjUso.innerHTML = antcont;
+      }
+    }
+  }
 }
 
 
