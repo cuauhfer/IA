@@ -426,6 +426,10 @@ function setInicial(y, x){
   objUso.innerHTML = cont;
   var detalle = document.getElementById("detalles");
   detalle.style.display = "none";
+
+  if(jugando.inicial != null && jugando.final != null){
+    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar"><i class="fas fa-gamepad"></i> Jugar</button>';
+  }
 }
 
 function setFinal(y, x){
@@ -465,6 +469,10 @@ function setFinal(y, x){
   objUso.innerHTML = cont;
   var detalle = document.getElementById("detalles");
   detalle.style.display = "none";
+
+  if(jugando.inicial != null && jugando.final != null){
+    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar"><i class="fas fa-gamepad"></i> Jugar</button>';
+  }
 }
 
 function hideDetalles(){
@@ -560,7 +568,7 @@ function confirmCharacter(id){
         antobjUso.innerHTML = antcont;
       }
       if(matriz[i][j].actual == true){
-        
+
         matriz[i][j].actual = false;
 
         var antobjUso = document.getElementById(matriz[i][j].coordenada);
@@ -586,6 +594,7 @@ function confirmCharacter(id){
       }
     }
   }
+  document.getElementById("inicio").innerHTML = "";
 }
 
 
