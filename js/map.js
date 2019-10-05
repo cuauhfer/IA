@@ -7,620 +7,657 @@ var numeros = [];               // Almacena los indices y valores del terreno
 var personajes = [];            // Personajes del juego
 var personajesCant = 0;
 var personajesIndices = 0;
-var jugando = null;
-var visitados = [];
+var jugando = null;             // Personaje en juego
+var visitados = [];             // Arreglo para contruir el arbol
+var numVisita = 0;              // Cantidad de movimientos
+var progreso = false;           // Indica si un juego esta en progreso
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
-function casilla(id, coor, nomTerreno, inicial, final, actual, visitados){
-  this.id = id;
-  this.coordenada = coor;
-  this.nomTerreno = nomTerreno;
-  this.inicial = inicial;
-  this.final = final;
-  this.actual = actual;
-  this.visitados = visitados;
-}
 
-function personaje(id, nombre, terrenos){
-  this.id = id;
-  this.nombre = nombre;
-  this.terrenos = terrenos;
-  this.inicial = null;
-  this.final = null;
-  this.actual = null;
-  this.matriz = null;
-}
+  function casilla(id, coor, nomTerreno, inicial, final, actual, visitados){
+    this.id = id;
+    this.coordenada = coor;
+    this.nomTerreno = nomTerreno;
+    this.inicial = inicial;         // Booleano
+    this.final = final;             // Booleano
+    this.actual = actual;           // Booleano
+    this.visitados = visitados;
+  }
+
+  function personaje(id, nombre, terrenos){
+    this.id = id;
+    this.nombre = nombre;
+    this.terrenos = terrenos;
+    this.inicial = null;            // Casilla
+    this.final = null;              // Casilla
+    this.actual = null;             // Casilla
+    //this.matriz = null;
+  }
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Creación del mapa
 ////////////////////////////////////////////////////////////////////////////////
 //______________________________________________________________________________Función para reiniciar el mapa
-function reset(files){
-  // Limpiar la matriz y su contenedor para cargar un nuevo mapa
-  matriz = [];
-  x = 0;
-  y = 0;
-  numeros = [];
+  function reset(files){
+    // Limpiar la matriz y su contenedor para cargar un nuevo mapa
+    matriz = [];
+    x = 0;
+    y = 0;
+    numeros = [];
 
-  document.getElementById("matriz").innerHTML = "";
-  document.getElementById("ajustes").innerHTML = "";
-  document.getElementById("detalles").innerHTML = '<p>'+
-                                                    'Coordenada: <span id="labCoordenada"></span><br>'+
-                                                    'Terreno: <span id="labTerreno"></span><br>'+
-                                                    'Inicial: <span id="labInicial"></span><br>'+
-                                                    'Final: <span id="labFinal"></span><br>'+
-                                                    'Actual: <span id="labActual"></span><br>'+
-                                                    'Visitas: <span id="labVisitas"></span><br>'+
-                                                  '</p>';
-  document.getElementById("detalles").style.visibility = "hidden";
-  loadFile(files);
-  document.getElementById("player").innerHTML = "";
-  document.getElementById("header").innerHTML = '<label for="fileInput"><i class="fas fa-plus-circle"></i> Nuevo Mapa</label><input id="fileInput" name="fileInput" type="file" size="50" onchange="reset(this.files)">';
+    document.getElementById("matriz").innerHTML = "";
+    document.getElementById("ajustes").innerHTML = "";
+    document.getElementById("detalles").innerHTML = '<p>'+
+                                                      'Coordenada: <span id="labCoordenada"></span><br>'+
+                                                      'Terreno: <span id="labTerreno"></span><br>'+
+                                                      'Inicial: <span id="labInicial"></span><br>'+
+                                                      'Final: <span id="labFinal"></span><br>'+
+                                                      'Actual: <span id="labActual"></span><br>'+
+                                                      'Visitas: <span id="labVisitas"></span><br>'+
+                                                    '</p>';
+    document.getElementById("detalles").style.visibility = "hidden";
+    loadFile(files);
+    document.getElementById("player").innerHTML = "";
+    document.getElementById("header").innerHTML = '<label for="fileInput"><i class="fas fa-plus-circle"></i> Nuevo Mapa</label><input id="fileInput" name="fileInput" type="file" size="50" onchange="reset(this.files)">';
 
-  personajes = [];    // Personajes del juego
-  personajesCant = 0;
-  personajesIndices = 0;
-}
+    personajes = [];    // Personajes del juego
+    personajesCant = 0;
+    personajesIndices = 0;
+  }
 
-//______________________________________________________________________________Cargar .TXT en la matriz
-function loadFile(files) {
+  //______________________________________________________________________________Cargar .TXT en la matriz
+  function loadFile(files) {
 
-  var file = files[0];                // variable del archivo
-  var reader = new FileReader();      // FileReader es una clase de lectura de archivos
+    var file = files[0];                // variable del archivo
+    var reader = new FileReader();      // FileReader es una clase de lectura de archivos
 
-  // Subfuncion para lectura del archivo
-  reader.onload = function (e) {
-    var texto = e.target.result;  // El resultado de texto se almacena en la variable texto
-    var elemento = "";            // Variables auxiliares, elemento representa un elemento (entero) de posicion [x][y]
-    var fila = [];                // Fila representa una fila de la matriz [todos los x][y]
+    // Subfuncion para lectura del archivo
+    reader.onload = function (e) {
+      var texto = e.target.result;  // El resultado de texto se almacena en la variable texto
+      var elemento = "";            // Variables auxiliares, elemento representa un elemento (entero) de posicion [x][y]
+      var fila = [];                // Fila representa una fila de la matriz [todos los x][y]
 
-    // Recorrer cada elemento del .TXT
-    for(var i = 0; i < texto.length; i++){
-      // Si el elemento es un número se concatena y guarda
-      if(texto[i] == "0" || texto[i] == "1" || texto[i] == "2" || texto[i] == "3" || texto[i] == "4" || texto[i] == "5" || texto[i] == "6" || texto[i] == "7" || texto[i] == "8" ||texto[i] == "9"){
-        elemento += texto[i];
-      }
-      // Si el elemento es una coma, se guarda el número en la fila, y se busca otro número
-      else if(texto[i] == ","){
-        // Buscar elementos ya existentes
-        if(elemento == ""){
-          alert("Error: El mapa contiene un elemento vacio");
-          return;
+      // Recorrer cada elemento del .TXT
+      for(var i = 0; i < texto.length; i++){
+        // Si el elemento es un número se concatena y guarda
+        if(texto[i] == "0" || texto[i] == "1" || texto[i] == "2" || texto[i] == "3" || texto[i] == "4" || texto[i] == "5" || texto[i] == "6" || texto[i] == "7" || texto[i] == "8" ||texto[i] == "9"){
+          elemento += texto[i];
         }
-        if(numeros.indexOf(elemento) == -1){
-          numeros.push(elemento);
-        }
-        fila.push(elemento);
-        elemento = "";
-      }
-      // Si el elemento es un salto de linea, se guarda el número en la fila, se guarda la fila y se limpian los auxiliares
-      else if(texto[i] == "\n"){
-        if(elemento == ""){
-          alert("Error: El mapa contiene un elemento vacio");
-          return;
-        }
-        if(numeros.indexOf(elemento) == -1){
-          numeros.push(elemento);
-        }
-        fila.push(elemento);
-        elemento = "";
-        if(x == 0){
-          if(fila.length == 0){
-            alert("Error: El mapa contiene una fila vacia");
+        // Si el elemento es una coma, se guarda el número en la fila, y se busca otro número
+        else if(texto[i] == ","){
+          // Buscar elementos ya existentes
+          if(elemento == ""){
+            alert("Error: El mapa contiene un elemento vacio");
             return;
           }
-          else if(fila.length > 15){
-            alert("Error: Una fila excede el tamaño máximo");
+          if(numeros.indexOf(elemento) == -1){
+            numeros.push(elemento);
+          }
+          fila.push(elemento);
+          elemento = "";
+        }
+        // Si el elemento es un salto de linea, se guarda el número en la fila, se guarda la fila y se limpian los auxiliares
+        else if(texto[i] == "\n"){
+          if(elemento == ""){
+            alert("Error: El mapa contiene un elemento vacio");
             return;
           }
-          x = fila.length;
-          matriz.push(fila);
-          fila = [];
+          if(numeros.indexOf(elemento) == -1){
+            numeros.push(elemento);
+          }
+          fila.push(elemento);
+          elemento = "";
+          if(x == 0){
+            if(fila.length == 0){
+              alert("Error: El mapa contiene una fila vacia");
+              return;
+            }
+            else if(fila.length > 15){
+              alert("Error: Una fila excede el tamaño máximo");
+              return;
+            }
+            x = fila.length;
+            matriz.push(fila);
+            fila = [];
+          }
+          else if(fila.length == x){
+            matriz.push(fila);
+            fila = [];
+          }
+          else {
+            alert("Error: Filas irregulares, fila:" + (matriz.length + 1));
+            return;
+          }
         }
-        else if(fila.length == x){
-          matriz.push(fila);
-          fila = [];
+        // Si el elemento es un retorno de carro, se ignora
+        else if(texto[i] == "\r"){
+
         }
-        else {
-          alert("Error: Filas irregulares, fila:" + (matriz.length + 1));
+        // Cualquier otro es un elemento extraño
+        else{
+          alert("Error: Caracter raro: " + texto[i]);
           return;
         }
       }
-      // Si el elemento es un retorno de carro, se ignora
-      else if(texto[i] == "\r"){
+      y = matriz.length;
 
-      }
-      // Cualquier otro es un elemento extraño
-      else{
-        alert("Error: Caracter raro: " + texto[i]);
+      colores();            // Función para imprimir la matriz en pantalla
+    };
+
+    //Leer el archivo como archivo de Texto
+    reader.readAsText(file);
+    document.getElementById("fileInput").value = "";
+  }
+
+  //______________________________________________________________________________Operadores de los colores
+  function colores(){
+    var docAjustes = document.getElementById("ajustes");
+    docAjustes.style.display = "flex";
+
+    for (var i = 0; i < numeros.length; i++) {
+      var selector =  '<div class="unColor"><label class="labelNumero" for="nombreNum">Número '+ numeros[i] +': </label>'+
+                        '<input class="nombreNumero" type="text" name="nombreNum" value="" placeholder="Terreno" id="nomTerreno'+numeros[i]+'">'+
+                        '<label class="labelNumero" for="nombreNum">Color '+ numeros[i] +': </label>'+
+                        '<input class="colorNumero" type="color" name="colorNum" value="#FFFFFF" id="colTerreno'+numeros[i]+'"></div>';
+      docAjustes.innerHTML = docAjustes.innerHTML + selector;
+    }
+
+    docAjustes.innerHTML = docAjustes.innerHTML + '<div class="div-colores"><button class="sendColors" type="button" name="button" id="sendColors" onClick="saveColors()">Guardar Terreno</button></div>';
+  }
+
+  //______________________________________________________________________________Guardar los nombre y colores elegidos
+  function saveColors(){
+    var error = false;
+
+    var auxNumeros = numeros;
+    numeros = []
+    var valores = []
+
+    for (var i = 0; i < auxNumeros.length; i++) {
+      idnombre = "nomTerreno"+auxNumeros[i];
+      idcolor = "colTerreno"+auxNumeros[i];
+      valores = [];
+      valores.push(auxNumeros[i]);
+      if(document.getElementById(idnombre).value == "" || document.getElementById(idnombre).value == null){
+        alert("El nombre del terreno no puede estar vacio");
+        numeros = auxNumeros;
+        error = true;
         return;
       }
-    }
-    y = matriz.length;
+      else{
+        var nomTerreno = document.getElementById(idnombre).value;
+        valores.push(nomTerreno);
+      }
 
-    colores();            // Función para imprimir la matriz en pantalla
-  };
-
-  //Leer el archivo como archivo de Texto
-  reader.readAsText(file);
-  document.getElementById("fileInput").value = "";
-}
-
-//______________________________________________________________________________Operadores de los colores
-function colores(){
-  var docAjustes = document.getElementById("ajustes");
-  docAjustes.style.display = "flex";
-
-  for (var i = 0; i < numeros.length; i++) {
-    var selector =  '<div class="unColor"><label class="labelNumero" for="nombreNum">Número '+ numeros[i] +': </label>'+
-                      '<input class="nombreNumero" type="text" name="nombreNum" value="" placeholder="Terreno" id="nomTerreno'+numeros[i]+'">'+
-                      '<label class="labelNumero" for="nombreNum">Color '+ numeros[i] +': </label>'+
-                      '<input class="colorNumero" type="color" name="colorNum" value="#FFFFFF" id="colTerreno'+numeros[i]+'"></div>';
-    docAjustes.innerHTML = docAjustes.innerHTML + selector;
-  }
-
-  docAjustes.innerHTML = docAjustes.innerHTML + '<div class="div-colores"><button class="sendColors" type="button" name="button" id="sendColors" onClick="saveColors()">Guardar Terreno</button></div>';
-}
-
-//______________________________________________________________________________Guardar los nombre y colores elegidos
-function saveColors(){
-  var error = false;
-
-  var auxNumeros = numeros;
-  numeros = []
-  var valores = []
-
-  for (var i = 0; i < auxNumeros.length; i++) {
-    idnombre = "nomTerreno"+auxNumeros[i];
-    idcolor = "colTerreno"+auxNumeros[i];
-    valores = [];
-    valores.push(auxNumeros[i]);
-    if(document.getElementById(idnombre).value == "" || document.getElementById(idnombre).value == null){
-      alert("El nombre del terreno no puede estar vacio");
-      numeros = auxNumeros;
-      error = true;
-      return;
-    }
-    else{
-      var nomTerreno = document.getElementById(idnombre).value;
-      valores.push(nomTerreno);
-    }
-
-    if(document.getElementById(idcolor).value == "" || document.getElementById(idcolor).value == null){
-      alert("El color no puede estar vacio");
-      numeros = auxNumeros;
-      error = true;
-      return;
-    }
-    else{
-      var colTerreno = document.getElementById(idcolor).value;
-      valores.push(colTerreno);
+      if(document.getElementById(idcolor).value == "" || document.getElementById(idcolor).value == null){
+        alert("El color no puede estar vacio");
+        numeros = auxNumeros;
+        error = true;
+        return;
+      }
+      else{
+        var colTerreno = document.getElementById(idcolor).value;
+        valores.push(colTerreno);
+      }
+      if(error == false){
+        numeros.push(valores);
+      }
     }
     if(error == false){
-      numeros.push(valores);
-    }
-  }
-  if(error == false){
-    document.getElementById("ajustes").style.display = "none";
-    verMatriz();
-  }
-}
-
-//______________________________________________________________________________Imprimir el mapa
-function verMatriz(){
-  var docMatriz = document.getElementById("matriz");
-  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
-  for(var j = 0; j <= x; j++){
-    if(j == 0){
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'> Y/X </div>";
-    }
-    else{
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + alpha[j] +".</div>";
-    }
-  }
-  for(var i = 0; i < matriz.length; i++){
-    docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + (i+1) +".</div>";
-    for(var j = 0; j < matriz[i].length; j++){
-      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+alpha[j+1]+(i+1)+"'>" + matriz[i][j] +"</div>";
+      document.getElementById("ajustes").style.display = "none";
+      verMatriz();
     }
   }
 
-  var widthElemento = "0";
-  var margin = "0";
-
-  if(x == 15){
-    widthElemento = "5%";
-    margin = "0.5%";
-  }
-  else if(x == 14){
-    widthElemento = "6%";
-    margin = "0.25%";
-  }
-  else if(x == 13){
-    widthElemento = "6%";
-    margin = "0.5%";
-  }
-  else if(x == 12){
-    widthElemento = "7%";
-    margin = "0.25%";
-  }
-  else if(x == 11){
-    widthElemento = "7%";
-    margin = "0.5%";
-  }
-  else if(x == 10){
-    widthElemento = "8%";
-    margin = "0.5%";
-  }
-  else if(x == 9){
-    widthElemento = "9%";
-    margin = "0.45%";
-  }
-  else if(x == 8){
-    widthElemento = "10%";
-    margin = "0.5%";
-  }
-  else if(x == 7){
-    widthElemento = "11%";
-    margin = "0.7%";
-  }
-  else if(x == 6){
-    widthElemento = "13%";
-    margin = "0.5%";
-  }
-  else if(x == 5){
-    widthElemento = "14%";
-    margin = "1.2%";
-  }
-  else if(x == 4){
-    widthElemento = "18%";
-    margin = "0.95%";
-  }
-  else if(x == 3){
-    widthElemento = "22%";
-    margin = "1.4%";
-  }
-  else if(x == 2){
-    widthElemento = "30%";
-    margin = "1.5%";
-  }
-  else if(x == 1){
-    widthElemento = "45%";
-    margin = "2.4%";
-  }
-
-  docMatriz.style.width = "90%";
-
-  var elementos = document.getElementsByClassName("elemento");
-  for(var i = 0; i < elementos.length; i++){
-      for (var j = 0; j < numeros.length; j++) {
-        if(elementos[i].textContent == numeros[j][0]){
-          elementos[i].style.background = numeros[j][2];
-          elementos[i].innerHTML = "";
-        }
-      }
-      elementos[i].style.width = widthElemento;
-      elementos[i].style.margin = margin;
-  }
-
-  var cont = 0;
-  for(var i = 0; i <= y; i++){
+  //______________________________________________________________________________Imprimir el mapa
+  function verMatriz(){
+    var docMatriz = document.getElementById("matriz");
+    var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
     for(var j = 0; j <= x; j++){
-      elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>";
-      cont++;
-    }
-  }
-
-  //document.getElementById("detalles").style.visibility = "visible";
-  document.getElementById("detalles").style.display = 'none';
-  convertirMatriz();
-}
-
-//______________________________________________________________________________Matriz de elementos
-function convertirMatriz(){
-  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
-  var matrizAux = [];
-  var filaAux = [];
-  var visitados = [];
-
-  for(var i = 0; i < matriz.length; i++){
-    for(var j = 0; j < matriz[i].length; j++){
-      for (var k = 0; k < numeros.length; k++) {
-        if(matriz[i][j] == numeros[k][0]){
-          var coorde = alpha[j+1] + (i+1);
-          var arregloMatriz = new casilla(matriz[i][j], coorde, numeros[k][1], false, false, false, visitados);
-        }
+      if(j == 0){
+        docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'> Y/X </div>";
       }
-      filaAux.push(arregloMatriz);
+      else{
+        docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + alpha[j] +".</div>";
+      }
     }
-    matrizAux.push(filaAux);
-    filaAux = [];
-  }
-  matriz = matrizAux;
+    for(var i = 0; i < matriz.length; i++){
+      docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento'>" + (i+1) +".</div>";
+      for(var j = 0; j < matriz[i].length; j++){
+        docMatriz.innerHTML = docMatriz.innerHTML + "<div class='elemento' onClick='verDetalles(this);' id='"+alpha[j+1]+(i+1)+"'>" + matriz[i][j] +"</div>";
+      }
+    }
 
-  var header = document.getElementById("header");
-  header.innerHTML = header.innerHTML + '<button type="button" name="button" id="addPersonaje" onclick="newCharacter()"><i class="fas fa-user-plus"></i> Nuevo Personaje</button>';
-}
+    var widthElemento = "0";
+    var margin = "0";
+
+    if(x == 15){
+      widthElemento = "5%";
+      margin = "0.5%";
+    }
+    else if(x == 14){
+      widthElemento = "6%";
+      margin = "0.25%";
+    }
+    else if(x == 13){
+      widthElemento = "6%";
+      margin = "0.5%";
+    }
+    else if(x == 12){
+      widthElemento = "7%";
+      margin = "0.25%";
+    }
+    else if(x == 11){
+      widthElemento = "7%";
+      margin = "0.5%";
+    }
+    else if(x == 10){
+      widthElemento = "8%";
+      margin = "0.5%";
+    }
+    else if(x == 9){
+      widthElemento = "9%";
+      margin = "0.45%";
+    }
+    else if(x == 8){
+      widthElemento = "10%";
+      margin = "0.5%";
+    }
+    else if(x == 7){
+      widthElemento = "11%";
+      margin = "0.7%";
+    }
+    else if(x == 6){
+      widthElemento = "13%";
+      margin = "0.5%";
+    }
+    else if(x == 5){
+      widthElemento = "14%";
+      margin = "1.2%";
+    }
+    else if(x == 4){
+      widthElemento = "18%";
+      margin = "0.95%";
+    }
+    else if(x == 3){
+      widthElemento = "22%";
+      margin = "1.4%";
+    }
+    else if(x == 2){
+      widthElemento = "30%";
+      margin = "1.5%";
+    }
+    else if(x == 1){
+      widthElemento = "45%";
+      margin = "2.4%";
+    }
+
+    docMatriz.style.width = "90%";
+
+    var elementos = document.getElementsByClassName("elemento");
+    for(var i = 0; i < elementos.length; i++){
+        for (var j = 0; j < numeros.length; j++) {
+          if(elementos[i].textContent == numeros[j][0]){
+            elementos[i].style.background = numeros[j][2];
+            elementos[i].innerHTML = "";
+          }
+        }
+        elementos[i].style.width = widthElemento;
+        elementos[i].style.margin = margin;
+    }
+
+    var cont = 0;
+    for(var i = 0; i <= y; i++){
+      for(var j = 0; j <= x; j++){
+        elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>";
+        cont++;
+      }
+    }
+
+    //document.getElementById("detalles").style.visibility = "visible";
+    document.getElementById("detalles").style.display = 'none';
+    convertirMatriz();
+  }
+
+  //______________________________________________________________________________Matriz de elementos
+  function convertirMatriz(){
+    var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
+    var matrizAux = [];
+    var filaAux = [];
+    var visitados = [];
+
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        for (var k = 0; k < numeros.length; k++) {
+          if(matriz[i][j] == numeros[k][0]){
+            var coorde = alpha[j+1] + (i+1);
+            var arregloMatriz = new casilla(matriz[i][j], coorde, numeros[k][1], false, false, false, visitados);
+          }
+        }
+        filaAux.push(arregloMatriz);
+      }
+      matrizAux.push(filaAux);
+      filaAux = [];
+    }
+    matriz = matrizAux;
+
+    var header = document.getElementById("header");
+    header.innerHTML = header.innerHTML + '<button type="button" name="button" id="addPersonaje" onclick="newCharacter()"><i class="fas fa-user-plus"></i> Nuevo Personaje</button>';
+  }
 
 //______________________________________________________________________________Ver detalles de un elemento
-function verDetalles(obj){
-  var detalle = document.getElementById("detalles");
-  var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
-  var objUso = document.getElementById(obj.id);
-  var coorX = objUso.firstChild.textContent;
-  var coorY = objUso.lastChild.textContent;
-  var coor = matriz[coorY-1][coorX-1];
+  function verDetalles(obj){
+    var detalle = $("#detalles");
+    var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
+    var objUso = $("#"+obj.id);
+    var coorX = +($("#"+obj.id+" .x").text());
+    var coorY = +($("#"+obj.id+" .y").text());
+    var coor = matriz[coorY-1][coorX-1];
 
-  var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
-                  '<p>'+
-                    'Coordenada: <span id="labCoordenada">'+ alpha[coorX] + coorY +'  </span><br>'+
-                    'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>'+
-                    'Inicial: <span id="labInicial">'+ coor.inicial +'</span><br>'+
-                    'Final: <span id="labFinal">'+ coor.final +'</span><br>'+
-                    'Actual: <span id="labActual">'+ coor.actual +'</span><br>'+
-                    'Visitas: <span id="labVisitas"></span>'+ coor.visitados +'<br>'+
-                  '</p>';
+    var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
+                    '<p>'+
+                      'Coordenada: <span id="labCoordenada">'+ alpha[coorX] + coorY +'  </span><br>'+
+                      'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>'+
+                      'Inicial: <span id="labInicial">'+ coor.inicial +'</span><br>'+
+                      'Final: <span id="labFinal">'+ coor.final +'</span><br>'+
+                      'Actual: <span id="labActual">'+ coor.actual +'</span><br>'+
+                      'Visitas: <span id="labVisitas"></span>'+ coor.visitados +'<br>'+
+                    '</p>';
 
-  //var alertContent ='Coordenada: X: '+ coorX +' Y: '+ coorY +' \n'+
-  //                  'Terreno: '+ coor.nomTerreno +'\n'+
-  //                  'Inicial: '+ coor.inicial +'\n'+
-  //                  'Final: '+ coor.final +'\n'+
-  //                  'Actual: '+ coor.actual +'\n'+
-  //                  'Visitas: '+ coor.visitados +'\n';
-
-  if(jugando != null){
-    for (a in jugando.terrenos){
-      if(coor.id == jugando.terrenos[a][0] && jugando.terrenos[a][1] != ""){
-        if(coor.inicial == false && coor.final == false){
-          content += '<button class="point" type="button" name="button" onclick="setInicial('+(coorY-1)+','+(coorX-1)+')">Inicial</button>';
-        }
-        if(coor.inicial == false && coor.final == false){
-          content += '<button class="point" type="button" name="button" onclick="setFinal('+(coorY-1)+','+(coorX-1)+')">Final</button>';
+    if(jugando != null){
+      for (a in jugando.terrenos){
+        if(coor.id == jugando.terrenos[a][0] && jugando.terrenos[a][1] != ""){
+          if(coor.inicial == false && coor.final == false && progreso == false){
+            content += '<button class="point" type="button" name="button" onclick="setInicial('+(coorY-1)+','+(coorX-1)+')">Inicial</button>';
+          }
+          if(coor.inicial == false && coor.final == false && progreso == false){
+            content += '<button class="point" type="button" name="button" onclick="setFinal('+(coorY-1)+','+(coorX-1)+')">Final</button>';
+          }
         }
       }
     }
+
+    detalle.css("display", "block");
+    detalle.css("visibility", "visible");
+    detalle.html(content);
   }
 
-  detalle.style.display = "block";
-  detalle.style.visibility = "visible";
-  detalle.innerHTML = content;
+  function setInicial(y, x){
 
-  //alert(alertContent);
-}
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].inicial == true){
+          matriz[i][j].inicial = false;
+          matriz[i][j].actual = false;
 
-function setInicial(y, x){
+          var antobjUso = $("#"+matriz[i][j].coordenada);
+          var antcoorX = +($("#"+matriz[i][j].coordenada+" .x").text());
+          var antcoorY = +($("#"+matriz[i][j].coordenada+" .y").text());
 
-  for(var i = 0; i < matriz.length; i++){
-    for(var j = 0; j < matriz[i].length; j++){
-      if(matriz[i][j].inicial == true){
-        matriz[i][j].inicial = false;
-        matriz[i][j].actual = false;
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
 
-        var antobjUso = document.getElementById(matriz[i][j].coordenada);
-        var antcoorX = antobjUso.firstChild.innerHTML;
-        var antcoorY = antobjUso.lastChild.innerHTML;
-
-        var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                      "<div class='y'>"+antcoorY+"</div>";
-
-        antobjUso.innerHTML = antcont;
+          antobjUso.html(antcont);
+        }
       }
+    }
+
+    matriz[y][x].actual = true;
+    matriz[y][x].inicial = true;
+
+    jugando.inicial = matriz[y][x];
+    jugando.actual = matriz[y][x];
+    jugando.matriz = [y, x]
+
+    var objUso = $("#"+matriz[y][x].coordenada);
+    var coorX = +($("#"+matriz[y][x].coordenada+" .x").text());
+    var coorY = +($("#"+matriz[y][x].coordenada+" .y").text());
+
+    var cont = "<div class='x'>"+coorX+"</div>"+
+               '<div class="start"><img src="img/start.png" alt=""></div>'+
+               '<div class="end"><img src="" alt=""></div>'+
+               '<img id="character" src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
+               '<div class="visitados">1</div>'+
+               "<div class='y'>"+coorY+"</div>";
+
+    objUso.html(cont);
+    var detalle = $("#detalles");
+    detalle.css("display", "none");
+
+    if(jugando.inicial != null && jugando.final != null){
+      document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
     }
   }
 
-  matriz[y][x].actual = true;
-  matriz[y][x].inicial = true;
+  function setFinal(y, x){
 
-  jugando.inicial = matriz[y][x];
-  jugando.actual = matriz[y][x];
-  jugando.matriz = [y, x]
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].final == true){
+          matriz[i][j].final = false;
 
-  var objUso = document.getElementById(matriz[y][x].coordenada);
-  var coorX = objUso.firstChild.innerHTML;
-  var coorY = objUso.lastChild.innerHTML;
+          var antobjUso = $("#"+matriz[i][j].coordenada);
+          var antcoorX = +($("#"+matriz[i][j].coordenada+" .x").text());
+          var antcoorY = +($("#"+matriz[i][j].coordenada+" .y").text());
 
-  var cont = "<div class='x'>"+coorX+"</div>"+
-             '<div class="start"><img src="img/start.png" alt=""></div>'+
-             '<div class="end"><img src="" alt=""></div>'+
-             '<img id="character" src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
-             '<div class="visitados">1</div>'+
-             "<div class='y'>"+coorY+"</div>";
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
 
-  objUso.innerHTML = cont;
-  var detalle = document.getElementById("detalles");
-  detalle.style.display = "none";
-
-  if(jugando.inicial != null && jugando.final != null){
-    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
-  }
-}
-
-function setFinal(y, x){
-
-  for(var i = 0; i < matriz.length; i++){
-    for(var j = 0; j < matriz[i].length; j++){
-      if(matriz[i][j].final == true){
-        matriz[i][j].final = false;
-
-        var antobjUso = document.getElementById(matriz[i][j].coordenada);
-        var antcoorX = antobjUso.firstChild.innerHTML;
-        var antcoorY = antobjUso.lastChild.innerHTML;
-
-        var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                      "<div class='y'>"+antcoorY+"</div>";
-
-        antobjUso.innerHTML = antcont;
+          antobjUso.html(antcont);
+        }
       }
+    }
+
+    matriz[y][x].final = true;
+
+    jugando.final = matriz[y][x];
+
+    var objUso = $("#"+matriz[y][x].coordenada);
+    var coorX = +($("#"+matriz[y][x].coordenada+" .x").text());
+    var coorY = +($("#"+matriz[y][x].coordenada+" .y").text());
+
+    var cont = "<div class='x'>"+coorX+"</div>"+
+               '<div class="start"><img src="" alt=""></div>'+
+               '<div class="end"><img src="img/finish.png" alt=""></div>'+
+               '<img src="" alt="">'+
+               '<div class="visitados"></div>'+
+               "<div class='y'>"+coorY+"</div>";
+
+    objUso.html(cont);
+    var detalle = $("#detalles");
+    detalle.css("display", "none");
+
+    if(jugando.inicial != null && jugando.final != null){
+      document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
     }
   }
 
-  matriz[y][x].final = true;
-
-  jugando.final = matriz[y][x];
-
-  var objUso = document.getElementById(matriz[y][x].coordenada);
-  var coorX = objUso.firstChild.innerHTML;
-  var coorY = objUso.lastChild.innerHTML;
-
-  var cont = "<div class='x'>"+coorX+"</div>"+
-             '<div class="start"><img src="" alt=""></div>'+
-             '<div class="end"><img src="img/finish.png" alt=""></div>'+
-             '<img src="" alt="">'+
-             '<div class="visitados"></div>'+
-             "<div class='y'>"+coorY+"</div>";
-
-  objUso.innerHTML = cont;
-  var detalle = document.getElementById("detalles");
-  detalle.style.display = "none";
-
-  if(jugando.inicial != null && jugando.final != null){
-    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
+  function hideDetalles(){
+    document.getElementById("detalles").style.display = "none";
   }
-}
-
-function hideDetalles(){
-  document.getElementById("detalles").style.display = "none";
-}
 ////////////////////////////////////////////////////////////////////////////////
 //  Creación de los personajes
 ////////////////////////////////////////////////////////////////////////////////
-function chancePicture(valor, id){
+  function chancePicture(valor, id){
 
-  var pic = document.getElementById("label"+id);
-  pic.innerHTML = "<span>"+valor+"</span><img src='img/gif"+ valor +".gif' alt='Personaje'>";
-}
+    var pic = document.getElementById("label"+id);
+    pic.innerHTML = "<span>"+valor+"</span><img src='img/gif"+ valor +".gif' alt='Personaje'>";
+  }
 
-function newCharacter(){
-  if(personajesCant < 5){
-    var jugadores = document.getElementById("player");
+  function newCharacter(){
+    if(personajesCant < 5){
+      var jugadores = document.getElementById("player");
 
-    var newPlayer="";
-    newPlayer += "<div class='character' id='character" + personajesIndices + "'>";
-    newPlayer += "          <div class='character-part'>";
-    newPlayer += "            <label id='label"+ personajesIndices +"' for='picture" + personajesIndices + "'><span>Eevee</span><img src='img/gifEevee.gif' alt='Personaje'></label>";
-    newPlayer += "            <select id='picture" + personajesIndices + "' onchange='chancePicture(this.value, "+personajesIndices+")'>";
-    newPlayer += "              <option value='Eevee'>Eevee</option>";
-    newPlayer += "              <option value='Vaporeon'>Vaporeon</option>";
-    newPlayer += "              <option value='Flareon'>Flareon</option>";
-    newPlayer += "              <option value='Jolteon'>Jolteon</option>";
-    newPlayer += "              <option value='Umbreon'>Umbreon</option>";
-    newPlayer += "              <option value='Espeon'>Espeon</option>";
-    newPlayer += "              <option value='Leafeon'>Leafeon</option>";
-    newPlayer += "              <option value='Glaceon'>Glaceon</option>";
-    newPlayer += "              <option value='Silveon'>Silveon</option>";
-    newPlayer += "            </select>";
-    newPlayer += "          </div>";
-    newPlayer += "          <div class='character-part'>";
+      var newPlayer="";
+      newPlayer += "<div class='character' id='character" + personajesIndices + "'>";
+      newPlayer += "          <div class='character-part'>";
+      newPlayer += "            <label id='label"+ personajesIndices +"' for='picture" + personajesIndices + "'><span>Eevee</span><img src='img/gifEevee.gif' alt='Personaje'></label>";
+      newPlayer += "            <select id='picture" + personajesIndices + "' onchange='chancePicture(this.value, "+personajesIndices+")'>";
+      newPlayer += "              <option value='Eevee'>Eevee</option>";
+      newPlayer += "              <option value='Vaporeon'>Vaporeon</option>";
+      newPlayer += "              <option value='Flareon'>Flareon</option>";
+      newPlayer += "              <option value='Jolteon'>Jolteon</option>";
+      newPlayer += "              <option value='Umbreon'>Umbreon</option>";
+      newPlayer += "              <option value='Espeon'>Espeon</option>";
+      newPlayer += "              <option value='Leafeon'>Leafeon</option>";
+      newPlayer += "              <option value='Glaceon'>Glaceon</option>";
+      newPlayer += "              <option value='Silveon'>Silveon</option>";
+      newPlayer += "            </select>";
+      newPlayer += "          </div>";
+      newPlayer += "          <div class='character-part'>";
+      for(var a = 0; a < numeros.length; a++){
+        newPlayer += "            <label for='"+ numeros[a][1] + personajesIndices + "'>"+ numeros[a][1] + "</label>";
+        newPlayer += "            <input type='number' id='"+ numeros[a][1] + personajesIndices + "' name='' value='' placeholder='N/A' min='0'>";
+      }
+
+      newPlayer += "          </div>";
+      newPlayer += "          <div class='btns'>";
+      newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Jugar</button>";
+      newPlayer += "            <button class='btn delete' type='button' id='delete-char" + personajesIndices + "' name='select-char' onClick='deleteCharacter("+personajesIndices+")'>Borrar</button>";
+      newPlayer += "          </div>";
+      newPlayer += "        </div>";
+
+
+      jugadores.innerHTML = jugadores.innerHTML + newPlayer;
+      personajesIndices = personajesIndices + 1;
+      personajesCant = personajesCant + 1;
+    }
+    else{
+      alert("Máxima cantidad de personajes alcanzada");
+    }
+  }
+
+  function deleteCharacter(id){
+    document.getElementById("character"+id).outerHTML = "";
+    personajesCant = personajesCant - 1;
+  }
+
+  function confirmCharacter(id){
+
+    $("#select-char"+id).remove();
+    $("#delete-char"+id).remove();
+    var terrenos = [];
+    var nombre = document.getElementById("picture"+id).value;
+    document.getElementById("picture"+id).disabled = "true";
     for(var a = 0; a < numeros.length; a++){
-      newPlayer += "            <label for='"+ numeros[a][1] + personajesIndices + "'>"+ numeros[a][1] + "</label>";
-      newPlayer += "            <input type='number' id='"+ numeros[a][1] + personajesIndices + "' name='' value='' placeholder='N/A' min='0'>";
+      var terr = []
+      terr.push(numeros[a][0]);
+      terr.push(document.getElementById(numeros[a][1] + id).value);
+      document.getElementById(numeros[a][1] + id).disabled = "true";
+      terrenos.push(terr);
     }
+    jugando = null;
+    var person = new personaje(id, nombre, terrenos);
+    personajes.push(person);
+    jugando = person;
+    progreso = false;
 
-    newPlayer += "          </div>";
-    newPlayer += "          <div class='btns'>";
-    newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Jugar</button>";
-    newPlayer += "            <button class='btn delete' type='button' id='delete-char" + personajesIndices + "' name='select-char' onClick='deleteCharacter("+personajesIndices+")'>Borrar</button>";
-    newPlayer += "          </div>";
-    newPlayer += "        </div>";
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].inicial == true){
+          matriz[i][j].inicial = false;
 
+          var antobjUso = $("#"+matriz[i][j].coordenada);;
+          var antcoorX = $("#"+matriz[i][j].coordenada+" .x").text();
+          var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
-    jugadores.innerHTML = jugadores.innerHTML + newPlayer;
-    personajesIndices = personajesIndices + 1;
-    personajesCant = personajesCant + 1;
-  }
-  else{
-    alert("Máxima cantidad de personajes alcanzada");
-  }
-}
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
 
-function deleteCharacter(id){
-  document.getElementById("character"+id).outerHTML = "";
-  personajesCant = personajesCant - 1;
-}
+          antobjUso.html(antcont);
+        }
+        if(matriz[i][j].actual == true){
 
-function confirmCharacter(id){
+          matriz[i][j].actual = false;
 
-  document.getElementById("select-char"+id).outerHTML = "";
-  document.getElementById("delete-char"+id).outerHTML = "";
-  var terrenos = [];
-  var nombre = document.getElementById("picture"+id).value;
-  document.getElementById("picture"+id).disabled = "true";
-  for(var a = 0; a < numeros.length; a++){
-    var terr = []
-    terr.push(numeros[a][0]);
-    terr.push(document.getElementById(numeros[a][1] + id).value);
-    document.getElementById(numeros[a][1] + id).disabled = "true";
-    terrenos.push(terr);
-  }
-  var person = new personaje(id, nombre, terrenos);
-  personajes.push(person);
-  jugando = person;
+          var antobjUso = $("#"+matriz[i][j].coordenada);;
+          var antcoorX = $("#"+matriz[i][j].coordenada+" .x").text();
+          var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
-  for(var i = 0; i < matriz.length; i++){
-    for(var j = 0; j < matriz[i].length; j++){
-      if(matriz[i][j].inicial == true){
-        matriz[i][j].inicial = false;
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
 
-        var antobjUso = document.getElementById(matriz[i][j].coordenada);
-        var antcoorX = antobjUso.firstChild.innerHTML;
-        var antcoorY = antobjUso.lastChild.innerHTML;
+          antobjUso.html(antcont);
+        }
+        if(matriz[i][j].final == true){
+          matriz[i][j].final = false;
 
-        var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                      "<div class='y'>"+antcoorY+"</div>";
+          var antobjUso = $("#"+matriz[i][j].coordenada);;
+          var antcoorX = $("#"+matriz[i][j].coordenada+" .x").text();
+          var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
-        antobjUso.innerHTML = antcont;
-      }
-      if(matriz[i][j].actual == true){
+          var antcont = "<div class='x'>"+antcoorX+"</div>"+
+                        "<div class='y'>"+antcoorY+"</div>";
 
-        matriz[i][j].actual = false;
-
-        var antobjUso = document.getElementById(matriz[i][j].coordenada);
-        var antcoorX = antobjUso.firstChild.innerHTML;
-        var antcoorY = antobjUso.lastChild.innerHTML;
-
-        var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                      "<div class='y'>"+antcoorY+"</div>";
-
-        antobjUso.innerHTML = antcont;
-      }
-      if(matriz[i][j].final == true){
-        matriz[i][j].final = false;
-
-        var antobjUso = document.getElementById(matriz[i][j].coordenada);
-        var antcoorX = antobjUso.firstChild.innerHTML;
-        var antcoorY = antobjUso.lastChild.innerHTML;
-
-        var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                      "<div class='y'>"+antcoorY+"</div>";
-
-        antobjUso.innerHTML = antcont;
+          antobjUso.html(antcont);
+        }
       }
     }
+    $("#inicio").html("");
+    $(document).off("keydown");
   }
-  document.getElementById("inicio").innerHTML = "";
-}
 
 ////////////////////////////////////////////////////////////////////////////////
-//  Modal
+//  Juego
 ////////////////////////////////////////////////////////////////////////////////
+  function move(){
+    progreso = true;
+    $("#iniciar").attr("disabled", true);
+    $("#iniciar").css("display", "none");
+    $("#iniciar").mouseenter(function(e) {
+        e.preventDefault();
+    });
+    numVisita = 1;
+    visitados.push([numVisita, jugando.actual.coordenada]);
 
-function move(){
-  $("#iniciar").attr("disabled", true);
-  $("#iniciar").css("opacity", "0.2");
-  $("#iniciar").mouseenter(function(e) {
-      e.preventDefault();
-  });
-  visitados.push([1, jugando.actual.coordenada]);
-  $(document).ready(function(){
-  	$(document).keydown(function(event){
+  	$(document).on("keydown",(function(event){
   		// 37 < left
       // 38 ^ Up
       // 39 > right
       // 40 v down
-      alert("El código de la tecla " + String.fromCharCode(event.which) + " es: " + event.which);
       if(event.which == 37 || event.which == 38 || event.which == 39 || event.which == 40){
+        //alert("El código de la tecla " + String.fromCharCode(event.which) + " es: " + event.which);
         event.preventDefault();
+
+        if(event.which == 37){
+          moveLeft();
+        }
+        else if(event.which == 38){
+          moveUp();
+        }
+        else if(event.which == 39){
+          moveRight();
+        }
+        else if(event.which == 40){
+          moveDown();
+        }
       }
-  	});
-  });
-}
+  	}));
+  }
+
+  function moveLeft(){
+    var act = jugando.actual.coordenada;
+    var actX = +($("#"+act+" .x").text());
+    var actY = +($("#"+act+" .y").text());
+    alert("Pos actual: "+act+ "\n"+actX + actY);
+
+    if(actX > 1){
+      numVisita += 1;
+      var nuevaCas = matriz[actY-1][actX-2];
+      var nuevaCasVista = $("#"+nuevaCas.coordenada);
+      var picture = $("#"+act+" #character");
+
+      // Mover Eevee en la vista
+      picture.fadeOut(500, function(){
+        picture.detach().appendTo(nuevaCasVista);
+        picture.fadeIn(500);
+      });
+
+      // Mover Eevee de la matriz
+      matriz[actY-1][actX-1].actual = false;
+      matriz[actY-1][actX-2].actual = true;
+
+      // Mover Eevee en sus datos
+      jugando.actual = matriz[actY-1][actX-2];
+    }
+  }
