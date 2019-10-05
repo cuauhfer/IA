@@ -1,13 +1,14 @@
 // _____________________________________________________________________________Variables Globales
 // Matriz es la matriz de los elementos que conforman el mapa
-var matriz = [];        // matriz[x][y][Objeto casilla(id, nomTerreno, inicial, final, actual, visita)]
-var x = 0;              // Tamaño de la matriz en X
-var y = 0;              // Tamaño de la matriz en Y
-var numeros = [];       // Almacena los indices y valores del terreno
-var personajes = [];    // Personajes del juego
+var matriz = [];                // matriz[x][y][Objeto casilla(id, nomTerreno, inicial, final, actual, visita)]
+var x = 0;                      // Tamaño de la matriz en X
+var y = 0;                      // Tamaño de la matriz en Y
+var numeros = [];               // Almacena los indices y valores del terreno
+var personajes = [];            // Personajes del juego
 var personajesCant = 0;
 var personajesIndices = 0;
 var jugando = null;
+var visitados = [];
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
 function casilla(id, coor, nomTerreno, inicial, final, actual, visitados){
@@ -27,6 +28,7 @@ function personaje(id, nombre, terrenos){
   this.inicial = null;
   this.final = null;
   this.actual = null;
+  this.matriz = null;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -411,6 +413,7 @@ function setInicial(y, x){
 
   jugando.inicial = matriz[y][x];
   jugando.actual = matriz[y][x];
+  jugando.matriz = [y, x]
 
   var objUso = document.getElementById(matriz[y][x].coordenada);
   var coorX = objUso.firstChild.innerHTML;
@@ -419,7 +422,7 @@ function setInicial(y, x){
   var cont = "<div class='x'>"+coorX+"</div>"+
              '<div class="start"><img src="img/start.png" alt=""></div>'+
              '<div class="end"><img src="" alt=""></div>'+
-             '<img src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
+             '<img id="character" src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
              '<div class="visitados">1</div>'+
              "<div class='y'>"+coorY+"</div>";
 
@@ -428,7 +431,7 @@ function setInicial(y, x){
   detalle.style.display = "none";
 
   if(jugando.inicial != null && jugando.final != null){
-    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar"><i class="fas fa-gamepad"></i> Jugar</button>';
+    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
   }
 }
 
@@ -471,7 +474,7 @@ function setFinal(y, x){
   detalle.style.display = "none";
 
   if(jugando.inicial != null && jugando.final != null){
-    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar"><i class="fas fa-gamepad"></i> Jugar</button>';
+    document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
   }
 }
 
@@ -597,7 +600,27 @@ function confirmCharacter(id){
   document.getElementById("inicio").innerHTML = "";
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //  Modal
 ////////////////////////////////////////////////////////////////////////////////
+
+function move(){
+  $("#iniciar").attr("disabled", true);
+  $("#iniciar").css("opacity", "0.2");
+  $("#iniciar").mouseenter(function(e) {
+      e.preventDefault();
+  });
+  visitados.push([1, jugando.actual.coordenada]);
+  $(document).ready(function(){
+  	$(document).keydown(function(event){
+  		// 37 < left
+      // 38 ^ Up
+      // 39 > right
+      // 40 v down
+      alert("El código de la tecla " + String.fromCharCode(event.which) + " es: " + event.which);
+      if(event.which == 37 || event.which == 38 || event.which == 39 || event.which == 40){
+        event.preventDefault();
+      }
+  	});
+  });
+}
