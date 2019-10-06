@@ -21,7 +21,6 @@ var progreso = false;           // Indica si un juego esta en progreso
     this.inicial = inicial;         // Booleano
     this.final = final;             // Booleano
     this.actual = actual;           // Booleano
-    this.visitados = visitados;
   }
 
   function personaje(id, nombre, terrenos){
@@ -31,7 +30,6 @@ var progreso = false;           // Indica si un juego esta en progreso
     this.inicial = null;            // Casilla
     this.final = null;              // Casilla
     this.actual = null;             // Casilla
-    //this.matriz = null;
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +42,14 @@ var progreso = false;           // Indica si un juego esta en progreso
     x = 0;
     y = 0;
     numeros = [];
+    personajes = [];            // Personajes del juego
+    personajesCant = 0;
+    personajesIndices = 0;
+    jugando = null;             // Personaje en juego
+    visitados = [];             // Arreglo para contruir el arbol
+    numVisita = 0;              // Cantidad de movimientos
+    progreso = false;           // Indica si un juego esta en progreso
+
 
     document.getElementById("matriz").innerHTML = "";
     document.getElementById("ajustes").innerHTML = "";
@@ -309,7 +315,9 @@ var progreso = false;           // Indica si un juego esta en progreso
     var cont = 0;
     for(var i = 0; i <= y; i++){
       for(var j = 0; j <= x; j++){
-        elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='y'>"+i+"</div>";
+        if(i != 0 && j != 0){
+          elementos[cont].innerHTML = elementos[cont].innerHTML + "<div class='x'>"+j+"</div><div class='visitados'></div><div class='y'>"+i+"</div>";
+        }
         cont++;
       }
     }
@@ -352,17 +360,32 @@ var progreso = false;           // Indica si un juego esta en progreso
     var objUso = $("#"+obj.id);
     var coorX = +($("#"+obj.id+" .x").text());
     var coorY = +($("#"+obj.id+" .y").text());
+    var coorVisita = $("#"+obj.id+" .visitados").text();
     var coor = matriz[coorY-1][coorX-1];
 
     var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
                     '<p>'+
                       'Coordenada: <span id="labCoordenada">'+ alpha[coorX] + coorY +'  </span><br>'+
-                      'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>'+
-                      'Inicial: <span id="labInicial">'+ coor.inicial +'</span><br>'+
-                      'Final: <span id="labFinal">'+ coor.final +'</span><br>'+
-                      'Actual: <span id="labActual">'+ coor.actual +'</span><br>'+
-                      'Visitas: <span id="labVisitas"></span>'+ coor.visitados +'<br>'+
-                    '</p>';
+                      'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>';
+                      if(coor.inicial == true){
+                        content += 'Inicial: <span id="labInicial" style="color: green;">Si</span><br>';
+                      }
+                      else{
+                        content += 'Inicial: <span id="labInicial" style="color: red;">No</span><br>';
+                      }
+                      if(coor.final == true){
+                        content += 'Final: <span id="labFinal" style="color: green;">Si</span><br>';
+                      }
+                      else{
+                        content += 'Final: <span id="labFinal" style="color: red;">No</span><br>';
+                      }
+                      if(coor.actual == true){
+                        content += 'Actual: <span id="labActual" style="color: green;">Si</span><br>';
+                      }
+                      else{
+                        content += 'Actual: <span id="labActual" style="color: red;">No</span><br>';
+                      }
+                      content += 'Visitas: <span id="labVisitas"></span>['+ coorVisita +']<br></p>';
 
     if(jugando != null){
       for (a in jugando.terrenos){
@@ -382,6 +405,9 @@ var progreso = false;           // Indica si un juego esta en progreso
     detalle.html(content);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+  //  Colocación de un personaje
+  ////////////////////////////////////////////////////////////////////////////////
   function setInicial(y, x){
 
     for(var i = 0; i < matriz.length; i++){
@@ -407,7 +433,6 @@ var progreso = false;           // Indica si un juego esta en progreso
 
     jugando.inicial = matriz[y][x];
     jugando.actual = matriz[y][x];
-    jugando.matriz = [y, x]
 
     var objUso = $("#"+matriz[y][x].coordenada);
     var coorX = +($("#"+matriz[y][x].coordenada+" .x").text());
@@ -417,7 +442,7 @@ var progreso = false;           // Indica si un juego esta en progreso
                '<div class="start"><img src="img/start.png" alt=""></div>'+
                '<div class="end"><img src="" alt=""></div>'+
                '<img id="character" src="img/'+jugando.nombre.toLowerCase()+'.png" alt="">'+
-               '<div class="visitados">1</div>'+
+               '<div class="visitados">1, </div>'+
                "<div class='y'>"+coorY+"</div>";
 
     objUso.html(cont);
@@ -486,7 +511,7 @@ var progreso = false;           // Indica si un juego esta en progreso
 
   function newCharacter(){
     if(personajesCant < 5){
-      var jugadores = document.getElementById("player");
+      var jugadores = $("#player");
 
       var newPlayer="";
       newPlayer += "<div class='character' id='character" + personajesIndices + "'>";
@@ -512,13 +537,13 @@ var progreso = false;           // Indica si un juego esta en progreso
 
       newPlayer += "          </div>";
       newPlayer += "          <div class='btns'>";
-      newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Jugar</button>";
+      newPlayer += "            <button class='btn select' type='button' id='select-char" + personajesIndices + "' name='select-char' onClick='confirmCharacter("+ personajesIndices +")'>Seleccionar</button>";
       newPlayer += "            <button class='btn delete' type='button' id='delete-char" + personajesIndices + "' name='select-char' onClick='deleteCharacter("+personajesIndices+")'>Borrar</button>";
       newPlayer += "          </div>";
       newPlayer += "        </div>";
 
 
-      jugadores.innerHTML = jugadores.innerHTML + newPlayer;
+      jugadores.append(newPlayer);
       personajesIndices = personajesIndices + 1;
       personajesCant = personajesCant + 1;
     }
@@ -534,8 +559,11 @@ var progreso = false;           // Indica si un juego esta en progreso
 
   function confirmCharacter(id){
 
+    // Limpiar botones del personaje
     $("#select-char"+id).remove();
     $("#delete-char"+id).remove();
+
+    // Agregar los terrenos al personaje
     var terrenos = [];
     var nombre = document.getElementById("picture"+id).value;
     document.getElementById("picture"+id).disabled = "true";
@@ -546,26 +574,35 @@ var progreso = false;           // Indica si un juego esta en progreso
       document.getElementById(numeros[a][1] + id).disabled = "true";
       terrenos.push(terr);
     }
+
+    // Restablecer el juego logicamente
     jugando = null;
+    numVisita = 0;
     var person = new personaje(id, nombre, terrenos);
     personajes.push(person);
     jugando = person;
     progreso = false;
 
+    // Buscar valores anteriores de inicial o final
     for(var i = 0; i < matriz.length; i++){
       for(var j = 0; j < matriz[i].length; j++){
+        // Restablecer visitados
+        $("#"+matriz[i][j].coordenada+" .visitados").html("");
+
+        // Reestablecer inicial
         if(matriz[i][j].inicial == true){
           matriz[i][j].inicial = false;
 
-          var antobjUso = $("#"+matriz[i][j].coordenada);;
+          var antobjUso = $("#"+matriz[i][j].coordenada);
           var antcoorX = $("#"+matriz[i][j].coordenada+" .x").text();
           var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
           var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
-
+                        "<div class='y'>"+antcoorY+"</div>"+
+                        "<div class='visitados'></div>";
           antobjUso.html(antcont);
         }
+        // Restablecer actual
         if(matriz[i][j].actual == true){
 
           matriz[i][j].actual = false;
@@ -575,10 +612,11 @@ var progreso = false;           // Indica si un juego esta en progreso
           var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
           var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
-
+                        "<div class='y'>"+antcoorY+"</div>"+
+                        "<div class='visitados'></div>";
           antobjUso.html(antcont);
         }
+        // Reestablecer final
         if(matriz[i][j].final == true){
           matriz[i][j].final = false;
 
@@ -587,8 +625,8 @@ var progreso = false;           // Indica si un juego esta en progreso
           var antcoorY = $("#"+matriz[i][j].coordenada+" .y").text();
 
           var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
-
+                        "<div class='y'>"+antcoorY+"</div>"+
+                        "<div class='visitados'></div>";
           antobjUso.html(antcont);
         }
       }
@@ -602,8 +640,7 @@ var progreso = false;           // Indica si un juego esta en progreso
 ////////////////////////////////////////////////////////////////////////////////
   function move(){
     progreso = true;
-    $("#iniciar").attr("disabled", true);
-    $("#iniciar").css("display", "none");
+    $("#iniciar").fadeOut();
     $("#iniciar").mouseenter(function(e) {
         e.preventDefault();
     });
@@ -639,19 +676,15 @@ var progreso = false;           // Indica si un juego esta en progreso
     var act = jugando.actual.coordenada;
     var actX = +($("#"+act+" .x").text());
     var actY = +($("#"+act+" .y").text());
-    alert("Pos actual: "+act+ "\n"+actX + actY);
+    var nuevaCas = matriz[actY-1][actX-2];
 
-    if(actX > 1){
+    if(actX > 1 && pisarTerreno(nuevaCas) == true){
       numVisita += 1;
-      var nuevaCas = matriz[actY-1][actX-2];
       var nuevaCasVista = $("#"+nuevaCas.coordenada);
       var picture = $("#"+act+" #character");
-
-      // Mover Eevee en la vista
-      picture.fadeOut(500, function(){
-        picture.detach().appendTo(nuevaCasVista);
-        picture.fadeIn(500);
-      });
+      var visit = $("#"+nuevaCas.coordenada+" .visitados");
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
@@ -659,5 +692,127 @@ var progreso = false;           // Indica si un juego esta en progreso
 
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY-1][actX-2];
+
+      visitados.push([numVisita, jugando.actual.coordenada]);
+    }
+  }
+
+  function moveRight(){
+    var act = jugando.actual.coordenada;
+    var actX = +($("#"+act+" .x").text());
+    var actY = +($("#"+act+" .y").text());
+    var nuevaCas = matriz[actY-1][actX];
+
+    if(actX < x  && pisarTerreno(nuevaCas) == true){
+      numVisita += 1;
+      var nuevaCasVista = $("#"+nuevaCas.coordenada);
+      var picture = $("#"+act+" #character");
+      var visit = $("#"+nuevaCas.coordenada+" .visitados");
+
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+
+      // Mover Eevee de la matriz
+      matriz[actY-1][actX-1].actual = false;
+      matriz[actY-1][actX-2].actual = true;
+
+
+      // Mover Eevee en sus datos
+      jugando.actual = matriz[actY-1][actX];
+
+      visitados.push([numVisita, jugando.actual.coordenada]);
+
+      mision();
+    }
+  }
+
+  function moveUp(){
+    var act = jugando.actual.coordenada;
+    var actX = +($("#"+act+" .x").text());
+    var actY = +($("#"+act+" .y").text());
+    var nuevaCas = matriz[actY-2][actX-1];
+
+    if(actY > 1  && pisarTerreno(nuevaCas) == true){
+      numVisita += 1;
+      var nuevaCasVista = $("#"+nuevaCas.coordenada);
+      var picture = $("#"+act+" #character");
+      var visit = $("#"+nuevaCas.coordenada+" .visitados");
+
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+
+      // Mover Eevee de la matriz
+      matriz[actY-1][actX-1].actual = false;
+      matriz[actY-1][actX-2].actual = true;
+
+      // Mover Eevee en sus datos
+      jugando.actual = matriz[actY-2][actX-1];
+      visitados.push([numVisita, jugando.actual.coordenada]);
+      mision();
+    }
+  }
+
+  function moveDown(){
+    var act = jugando.actual.coordenada;
+    var actX = +($("#"+act+" .x").text());
+    var actY = +($("#"+act+" .y").text());
+    var nuevaCas = matriz[actY][actX-1];
+
+    if(actY < x && pisarTerreno(nuevaCas) == true){
+      numVisita += 1;
+      var nuevaCasVista = $("#"+nuevaCas.coordenada);
+      var picture = $("#"+act+" #character");
+      var visit = $("#"+nuevaCas.coordenada+" .visitados");
+
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+
+      // Mover Eevee de la matriz
+      matriz[actY-1][actX-1].actual = false;
+      matriz[actY-1][actX-2].actual = true;
+
+      // Mover Eevee en sus datos
+      jugando.actual = matriz[actY][actX-1];
+      visitados.push([numVisita, jugando.actual.coordenada]);
+      mision();
+    }
+  }
+
+  function refresh(visit, picture, nuevaCasVista){
+    visit.fadeOut(100, function(){
+      visit.html(visit.html() + numVisita + ", ");
+      visit.fadeIn(100);
+    });
+
+    // Mover Eevee en la vista
+    picture.fadeOut(100, function(){
+      picture.detach().appendTo(nuevaCasVista);
+      picture.fadeIn(100, function(){
+        mision();
+      });
+    });
+  }
+
+  function mision(){
+    // Validar si se ha cumplido la misión
+    if(jugando.actual.coordenada == jugando.final.coordenada){
+      alert(jugando.nombre + " ha finalizado su camino!!");
+      $(document).off("keydown");
+    }
+  }
+
+  function pisarTerreno(nuevo){
+    // Recorrer cada terreno del jugador
+    for(var a = 0; a < jugando.terrenos.length; a++){
+      // Si el ID coincide con el nuevo terreno
+      if(nuevo.id == jugando.terrenos[a][0]){
+        // Si tiene un peso, entonces aplica
+        if(jugando.terrenos[a][1] != ""){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
     }
   }
