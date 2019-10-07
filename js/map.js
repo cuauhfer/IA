@@ -71,7 +71,7 @@ var progreso = false;           // Indica si un juego esta en progreso
     personajesIndices = 0;
   }
 
-  //______________________________________________________________________________Cargar .TXT en la matriz
+  //____________________________________________________________________________Cargar .TXT en la matriz
   function loadFile(files) {
 
     var file = files[0];                // variable del archivo
@@ -155,23 +155,30 @@ var progreso = false;           // Indica si un juego esta en progreso
     document.getElementById("fileInput").value = "";
   }
 
-  //______________________________________________________________________________Operadores de los colores
+  //____________________________________________________________________________Operadores de los colores
   function colores(){
     var docAjustes = document.getElementById("ajustes");
     docAjustes.style.display = "flex";
 
     for (var i = 0; i < numeros.length; i++) {
       var selector =  '<div class="unColor"><label class="labelNumero" for="nombreNum">Número '+ numeros[i] +': </label>'+
-                        '<input class="nombreNumero" type="text" name="nombreNum" value="" placeholder="Terreno" id="nomTerreno'+numeros[i]+'">'+
-                        '<label class="labelNumero" for="nombreNum">Color '+ numeros[i] +': </label>'+
+                        '<input class="nombreNumero" type="text" name="nombreNum" value="" placeholder="Nombre del terreno" id="nomTerreno'+numeros[i]+'">'+
+                        '<label class="labelNumero" for="nombreNum" style="font-size: 14px;">Color del terreno:</label>'+
                         '<input class="colorNumero" type="color" name="colorNum" value="#FFFFFF" id="colTerreno'+numeros[i]+'"></div>';
       docAjustes.innerHTML = docAjustes.innerHTML + selector;
     }
 
     docAjustes.innerHTML = docAjustes.innerHTML + '<div class="div-colores"><button class="sendColors" type="button" name="button" id="sendColors" onClick="saveColors()">Guardar Terreno</button></div>';
+
+
+    $("#spacer").fadeOut(300, function(){
+      var aviso = '<div class="aviso"><h2>Ingrese el nombre y color de cada terreno encontrado</h2></div>';
+      $("#spacer").html(aviso);
+      $("#spacer").fadeIn(300);
+    });
   }
 
-  //______________________________________________________________________________Guardar los nombre y colores elegidos
+  //____________________________________________________________________________Guardar los nombre y colores elegidos
   function saveColors(){
     var error = false;
 
@@ -215,7 +222,7 @@ var progreso = false;           // Indica si un juego esta en progreso
     }
   }
 
-  //______________________________________________________________________________Imprimir el mapa
+  //____________________________________________________________________________Imprimir el mapa
   function verMatriz(){
     var docMatriz = document.getElementById("matriz");
     var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
@@ -325,9 +332,15 @@ var progreso = false;           // Indica si un juego esta en progreso
     //document.getElementById("detalles").style.visibility = "visible";
     document.getElementById("detalles").style.display = 'none';
     convertirMatriz();
+
+    $("#spacer").fadeOut(300, function(){
+        var aviso = '<div class="aviso"><h2>Hora de crear algunos personajes</h2></div>';
+      $("#spacer").html(aviso);
+      $("#spacer").fadeIn(300);
+    });
   }
 
-  //______________________________________________________________________________Matriz de elementos
+  //____________________________________________________________________________Matriz de elementos
   function convertirMatriz(){
     var alpha = ["Index","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"];
     var matrizAux = [];
@@ -365,8 +378,8 @@ var progreso = false;           // Indica si un juego esta en progreso
 
     var content =   '<button type="button" name="button" onclick="hideDetalles()">X</button>'+
                     '<p>'+
-                      'Coordenada: <span id="labCoordenada">'+ alpha[coorX] + coorY +'  </span><br>'+
-                      'Terreno: <span id="labTerreno">'+ coor.nomTerreno +'</span><br>';
+                      'Coordenada: <span id="labCoordenada" style="color: blue;">'+ alpha[coorX] + coorY +'  </span><br>'+
+                      'Terreno: <span id="labTerreno" style="color: blue;">'+ coor.nomTerreno +'</span><br>';
                       if(coor.inicial == true){
                         content += 'Inicial: <span id="labInicial" style="color: green;">Si</span><br>';
                       }
@@ -385,7 +398,7 @@ var progreso = false;           // Indica si un juego esta en progreso
                       else{
                         content += 'Actual: <span id="labActual" style="color: red;">No</span><br>';
                       }
-                      content += 'Visitas: <span id="labVisitas"></span>['+ coorVisita +']<br></p>';
+                      content += 'Visitas: <span id="labVisitas" style="color: blue;">['+ coorVisita +']</span><br></p>';
 
     if(jugando != null){
       for (a in jugando.terrenos){
@@ -532,7 +545,7 @@ var progreso = false;           // Indica si un juego esta en progreso
       newPlayer += "          <div class='character-part'>";
       for(var a = 0; a < numeros.length; a++){
         newPlayer += "            <label for='"+ numeros[a][1] + personajesIndices + "'>"+ numeros[a][1] + "</label>";
-        newPlayer += "            <input type='number' id='"+ numeros[a][1] + personajesIndices + "' name='' value='' placeholder='N/A' min='0'>";
+        newPlayer += "            <input type='number' id='"+ numeros[a][1] + personajesIndices + "' name='' value='' placeholder='N/A' onchange='valCosto(this)' onkeydown='costoKey(event)' min='0'>";
       }
 
       newPlayer += "          </div>";
@@ -546,6 +559,12 @@ var progreso = false;           // Indica si un juego esta en progreso
       jugadores.append(newPlayer);
       personajesIndices = personajesIndices + 1;
       personajesCant = personajesCant + 1;
+
+      $("#spacer").fadeOut(300, function(){
+        var aviso = '<div class="aviso"><h2>Configura tu personaje favorito y seleccionalo</h2></div>';
+        $("#spacer").html(aviso);
+        $("#spacer").fadeIn(300);
+      });
     }
     else{
       alert("Máxima cantidad de personajes alcanzada");
@@ -631,8 +650,13 @@ var progreso = false;           // Indica si un juego esta en progreso
         }
       }
     }
-    $("#inicio").html("");
     $(document).off("keydown");
+
+    $("#spacer").fadeOut(300, function(){
+      var aviso = '<div class="aviso"><h2>Ingresa la posición inicial y final</h2></div>';
+      $("#spacer").html(aviso);
+      $("#spacer").fadeIn(300);
+    });
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -670,6 +694,12 @@ var progreso = false;           // Indica si un juego esta en progreso
         }
       }
   	}));
+
+    $("#spacer").fadeOut(300, function(){
+      var aviso = '<div class="aviso"><h2><i class="fas fa-gamepad"></i> Jugando</h2></div>';
+      $("#spacer").html(aviso);
+      $("#spacer").fadeIn(300);
+    });
   }
 
   function moveLeft(){
@@ -721,8 +751,6 @@ var progreso = false;           // Indica si un juego esta en progreso
       jugando.actual = matriz[actY-1][actX];
 
       visitados.push([numVisita, jugando.actual.coordenada]);
-
-      mision();
     }
   }
 
@@ -748,7 +776,6 @@ var progreso = false;           // Indica si un juego esta en progreso
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY-2][actX-1];
       visitados.push([numVisita, jugando.actual.coordenada]);
-      mision();
     }
   }
 
@@ -774,7 +801,6 @@ var progreso = false;           // Indica si un juego esta en progreso
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY][actX-1];
       visitados.push([numVisita, jugando.actual.coordenada]);
-      mision();
     }
   }
 
@@ -798,6 +824,17 @@ var progreso = false;           // Indica si un juego esta en progreso
     if(jugando.actual.coordenada == jugando.final.coordenada){
       alert(jugando.nombre + " ha finalizado su camino!!");
       $(document).off("keydown");
+
+      $("#spacer").fadeOut(300, function(){
+        var aviso = '<div class="aviso"><h2>Juego terminado: ';
+        for(var a = 0; a < visitados.length; a++){
+          aviso += visitados[a][1] + " > ";
+        }
+        aviso += '</h2></div>';
+        $("#spacer").html(aviso);
+        $("#spacer").fadeIn(300);
+      });
+      $("#spacer").css("height", "auto");
     }
   }
 
@@ -816,3 +853,60 @@ var progreso = false;           // Indica si un juego esta en progreso
       }
     }
   }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Validaciones de los costos
+////////////////////////////////////////////////////////////////////////////////
+
+ function valCosto(inp){
+   var valor = inp.value.toString();
+   var filtro = "";
+   var decimal = false;
+   var numDecimal = 0;
+
+   for(var a = 0; a < valor.length; a++){
+     if(valor.charAt(a) == "-"){
+       alert("No se permiten numeros negativos");
+       filtro = "";
+       break;
+     }
+     else if (valor.charAt(a) == "e") {
+       alert("No se permiten exponenciales");
+       filtro = "";
+       break;
+     }
+     else if(valor.charAt(a) == "."){
+       if(decimal == false){
+         filtro += valor.charAt(a);
+         decimal = true;
+       }
+       else{
+         alert("Error: Más de un punto decimal");
+         filtro = "";
+         break;
+       }
+     }
+     else{
+       if(decimal == true){
+         numDecimal += 1;
+       }
+       if(numDecimal <=2){
+         filtro += valor.charAt(a);
+       }
+     }
+   }
+   inp.value = filtro;
+ }
+
+ function costoKey(event){
+
+    if(event.which == 69){
+      event.preventDefault();
+    }
+    if(event.which == 109){
+      event.preventDefault();
+    }
+    if(event.which == 107){
+      event.preventDefault();
+    }
+ }

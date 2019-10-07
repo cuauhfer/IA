@@ -303,3 +303,46 @@ main {
         transform: scale(1.05); }
         main .inicio button:hover i {
           transform: rotate(360deg); }
+
+.aviso {
+  width: 80%;
+  height: 100%;
+  margin: 10px auto;
+  background: rgba(11, 125, 186, 0.75);
+  line-height: 50px;
+  font-size: 18px;
+  color: white;
+  text-align: center;
+  transition: transform 0.3s;
+  border-style: outset;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  animation-name: bg-pastel;
+  animation-duration: 4s;
+  animation-direction: reverse;
+  animation-iteration-count: infinite;
+  overflow: auto; }
+  .aviso i {
+    transform: rotate(0deg);
+    transition: transform 1s;
+    animation-name: rotate-icon;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite; }
+
+@keyframes bg-pastel {
+  0% {
+    background-color: black; }
+  25% {
+    background-color: #03314c; }
+  50% {
+    background-color: #184e7a; }
+  75% {
+    background-color: #03314c; }
+  100% {
+    background-color: black; } }
+
+@keyframes rotate-icon {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
