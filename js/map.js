@@ -434,7 +434,8 @@ var progreso = false;           // Indica si un juego esta en progreso
           var antcoorY = +($("#"+matriz[i][j].coordenada+" .y").text());
 
           var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
+                        "<div class='y'>"+antcoorY+"</div>"+
+                        "<div class='visitados'></div>";
 
           antobjUso.html(antcont);
         }
@@ -479,7 +480,8 @@ var progreso = false;           // Indica si un juego esta en progreso
           var antcoorY = +($("#"+matriz[i][j].coordenada+" .y").text());
 
           var antcont = "<div class='x'>"+antcoorX+"</div>"+
-                        "<div class='y'>"+antcoorY+"</div>";
+                        "<div class='y'>"+antcoorY+"</div>"+
+                        "<div class='visitados'></div>";
 
           antobjUso.html(antcont);
         }
@@ -744,7 +746,7 @@ var progreso = false;           // Indica si un juego esta en progreso
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
-      matriz[actY-1][actX-2].actual = true;
+      matriz[actY-1][actX].actual = true;
 
 
       // Mover Eevee en sus datos
@@ -771,7 +773,7 @@ var progreso = false;           // Indica si un juego esta en progreso
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
-      matriz[actY-1][actX-2].actual = true;
+      matriz[actY-2][actX-1].actual = true;
 
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY-2][actX-1];
@@ -796,7 +798,7 @@ var progreso = false;           // Indica si un juego esta en progreso
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
-      matriz[actY-1][actX-2].actual = true;
+      matriz[actY][actX-1].actual = true;
 
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY][actX-1];
@@ -805,15 +807,15 @@ var progreso = false;           // Indica si un juego esta en progreso
   }
 
   function refresh(visit, picture, nuevaCasVista){
-    visit.fadeOut(100, function(){
+    visit.fadeOut(50, function(){
       visit.html(visit.html() + numVisita + ", ");
-      visit.fadeIn(100);
+      visit.fadeIn(50);
     });
 
     // Mover Eevee en la vista
-    picture.fadeOut(100, function(){
+    picture.fadeOut(50, function(){
       picture.detach().appendTo(nuevaCasVista);
-      picture.fadeIn(100, function(){
+      picture.fadeIn(50, function(){
         mision();
       });
     });
