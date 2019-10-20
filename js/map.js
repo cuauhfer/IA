@@ -609,7 +609,7 @@ var progreso = false;           // Indica si un juego esta en progreso
       for(var j = 0; j < matriz[i].length; j++){
         // Restablecer visitados
         $("#"+matriz[i][j].coordenada+" .visitados").html("");
-
+        $("#"+matriz[i][j].coordenada).removeClass("desconocido");
         // Reestablecer inicial
         if(matriz[i][j].inicial == true){
           matriz[i][j].inicial = false;
@@ -672,6 +672,7 @@ var progreso = false;           // Indica si un juego esta en progreso
     });
     numVisita = 1;
     visitados.push([numVisita, jugando.actual.coordenada]);
+    enmascarar();
 
   	$(document).on("keydown",(function(event){
   		// 37 < left
@@ -715,6 +716,9 @@ var progreso = false;           // Indica si un juego esta en progreso
       var nuevaCasVista = $("#"+nuevaCas.coordenada);
       var picture = $("#"+act+" #character");
       var visit = $("#"+nuevaCas.coordenada+" .visitados");
+
+      // Desenmascarar casillas cercanas
+      vecino(actY-1, actX-2);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -741,6 +745,8 @@ var progreso = false;           // Indica si un juego esta en progreso
       var picture = $("#"+act+" #character");
       var visit = $("#"+nuevaCas.coordenada+" .visitados");
 
+      // Desenmascarar casillas cercanas
+      vecino(actY-1, actX);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -768,6 +774,8 @@ var progreso = false;           // Indica si un juego esta en progreso
       var picture = $("#"+act+" #character");
       var visit = $("#"+nuevaCas.coordenada+" .visitados");
 
+      // Desenmascarar casillas cercanas
+      vecino(actY-2, actX-1);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -792,6 +800,9 @@ var progreso = false;           // Indica si un juego esta en progreso
       var nuevaCasVista = $("#"+nuevaCas.coordenada);
       var picture = $("#"+act+" #character");
       var visit = $("#"+nuevaCas.coordenada+" .visitados");
+
+      // Desenmascarar casillas cercanas
+      vecino(actY, actX-1);
 
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
@@ -856,6 +867,53 @@ var progreso = false;           // Indica si un juego esta en progreso
     }
   }
 
+////////////////////////////////////////////////////////////////////////////////
+//  Enmascaramiento
+////////////////////////////////////////////////////////////////////////////////
+
+  function enmascarar(){
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].inicial == false && matriz[i][j].final == false){
+          $("#"+matriz[i][j].coordenada).addClass("desconocido");
+        }
+      }
+    }
+
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].inicial == true){
+          if(i > 0){
+              $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
+          }
+          if(i < x-1){
+              $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
+          }
+          if(j > 0){
+              $("#"+matriz[i][j-1].coordenada).removeClass("desconocido");
+          }
+          if(j < y-1){
+              $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
+          }
+        }
+      }
+    }
+  }
+
+  function vecino(i, j){
+    if(i > 0){
+        $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
+    }
+    if(i < x-1){
+        $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
+    }
+    if(j > 0){
+        $("#"+matriz[i][j-1].coordenada).removeClass("desconocido");
+    }
+    if(j < y-1){
+        $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
+    }
+  }
 ////////////////////////////////////////////////////////////////////////////////
 //  Validaciones de los costos
 ////////////////////////////////////////////////////////////////////////////////
