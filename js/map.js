@@ -23,7 +23,6 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
     this.inicial = inicial;         // Booleano
     this.final = final;             // Booleano
     this.actual = actual;           // Booleano
-    this.visitado = false;          // Visita de arbol
   }
 
   function personaje(id, nombre, terrenos){
@@ -683,7 +682,6 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
     numVisita = 1;
     visitados.push([numVisita, jugando.actual.coordenada]);
     enmascarar();
-    arbol();
 
   	$(document).on("keydown",(function(event){
   		// 37 < left
@@ -766,10 +764,8 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
       matriz[actY-1][actX-1].actual = false;
       matriz[actY-1][actX].actual = true;
 
-
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY-1][actX];
-
       visitados.push([numVisita, jugando.actual.coordenada]);
     }
   }
@@ -793,7 +789,6 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
 
       // Desenmascarar casillas cercanas
       vecino(actY, actX-1);
-
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -830,7 +825,6 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
 
       // Mover Eevee en sus datos
       jugando.actual = matriz[actY-1][actX-2];
-
       visitados.push([numVisita, jugando.actual.coordenada]);
     }
   }
@@ -849,7 +843,6 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
       });
     });
 
-    arbol();
   }
 
   function mision(){
@@ -886,55 +879,18 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
     for(var i = 0; i < matriz.length; i++){
       for(var j = 0; j < matriz[i].length; j++){
         if(matriz[i][j].inicial == true){
-          origen = new rama();
-          origen.casilla = matriz[i][j];        // Rama de origne del arbol
-          origen.casilla.visitado = true;
-          ramaAct = origen;
           if(i > 0){                                                            // Casilla superior
-              $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
-              if(pisarTerreno(matriz[i-1][j]) == true){
-                aux = new rama();
-                aux.casilla = matriz[i-1][j];
-                aux.padre = ramaAct;
-                aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
-                aux.lado = 1;
-                origen.hijos.push(aux);
-              }
+            $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
           }
           if(j < y-1){                                                          // Casilla derecha
-              $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
-              if(pisarTerreno(matriz[i][j+1]) == true){
-                aux = new rama();
-                aux.casilla = matriz[i][j+1];
-                aux.padre = ramaAct;
-                aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
-                aux.lado = 2;
-                origen.hijos.push(aux);
-              }
+            $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
           }
           if(i < x-1){                                                          // Casilla inferior
-              $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
-              if(pisarTerreno(matriz[i+1][j]) == true){
-                aux = new rama();
-                aux.casilla = matriz[i+1][j];
-                aux.padre = ramaAct;
-                aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
-                aux.lado = 3;
-                origen.hijos.push(aux);
-              }
+            $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
           }
           if(j > 0){                                                            // Casilla izquierda
-              $("#"+matriz[i][j-1].coordenada).removeClass("desconocido");
-              if(pisarTerreno(matriz[i][j-1]) == true){
-                aux = new rama();
-                aux.casilla = matriz[i][j-1];
-                aux.padre = ramaAct;
-                aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
-                aux.lado = 4;
-                origen.hijos.push(aux);
-              }
+            $("#"+matriz[i][j-1].coordenada).removeClass("desconocido");
           }
-
         }
       }
     }
@@ -944,71 +900,15 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
 
     if(i > 0){                                                                  // Arriba
         $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
-        if(pisarTerreno(matriz[i-1][j]) == true && matriz[i-1][j].visitado == false){
-          aux = new rama();
-          aux.casilla = matriz[i-1][j];
-          aux.padre = ramaAct;
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
-          aux.lado = 1;
-          ramaAct.hijos.push(aux);
-        }
     }
     if(j < x-1){                                                                // Derecha
         $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
-        if(pisarTerreno(matriz[i][j+1]) == true && matriz[i][j+1].visitado == false){
-          aux = new rama();
-          aux.casilla = matriz[i][j+1];
-          aux.padre = ramaAct;
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
-          aux.lado = 2;
-          ramaAct.hijos.push(aux);
-        }
     }
     if(i < y-1){                                                                // Abajo
         $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
-        if(pisarTerreno(matriz[i+1][j]) == true && matriz[i+1][j].visitado == false){
-          aux = new rama();
-          aux.casilla = matriz[i+1][j];
-          aux.padre = ramaAct;
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
-          aux.lado = 3;
-          ramaAct.hijos.push(aux);
-        }
     }
     if(j > 0){                                                                  // Izquierda
         $("#"+matriz[i][j-1].coordenada).removeClass("desconocido");
-        if(pisarTerreno(matriz[i][j-1]) == true && matriz[i][j-1].visitado == false){
-          aux = new rama();
-          aux.casilla = matriz[i][j-1];
-          aux.padre = ramaAct;
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
-          aux.lado = 4;
-          ramaAct.hijos.push(aux);
-        }
     }
 
-  }
-
-////////////////////////////////////////////////////////////////////////////////
-//  Arbol
-////////////////////////////////////////////////////////////////////////////////
-
-  function arbol(){
-    $("#arbol").html("");
-    hoja(origen, 0);
-  }
-
-  function hoja(ramas, esp){
-    var espacios = "";
-    for (var i = 0; i < esp; i++){
-      espacios += "&nbsp;";
-    }
-    $("#arbol").append(espacios + ramas.casilla.coordenada + " " + ramas.costo + " " +"<br>");
-    if(ramas.casilla.coordenada == jugando.actual.coordenada){
-      ramaAct = ramas;
-      ramaAct.casilla.visitado = true;
-    }
-    for (a in ramas.hijos){
-      hoja(ramas.hijos[a], esp+2);
-    }
   }
