@@ -351,32 +351,92 @@ main {
   background: black !important; }
 
 .arbol {
-  width: 100%; }
-  .arbol .nodo {
-    justify-content: center;
-    text-align: center;
-    display: flex;
-    flex-flow: wrap row; }
-    .arbol .nodo .nodoData {
-      width: 100%;
-      padding: 10px;
-      width: 90%;
-      margin: 0 5%;
-      display: flex;
-      flex-flow: column;
-      justify-content: flex-start;
-      align-items: center; }
-      .arbol .nodo .nodoData .visitas {
-        color: red; }
-      .arbol .nodo .nodoData .costo {
-        color: blue; }
-      .arbol .nodo .nodoData hr {
-        border: 1px solid black;
-        width: 90%;
-        margin: 5px 5%; }
-    .arbol .nodo .nodosRamas {
-      width: 100%;
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: flex-start;
-      align-items: space-between; }
+  width: 90%;
+  margin: 0 5%;
+  line-height: 30px;
+  /*.nodo
+		justify-content: center
+		text-align: center
+		display: flex
+		flex-flow: wrap row
+		.nodoData
+			width: 100%
+			padding: 10px
+			width: 90%
+			margin: 0 5%
+			display: flex
+			flex-flow: column
+			justify-content: flex-start
+			align-items: center
+			.visitas
+				color: red
+			.costo
+				color: blue
+			hr
+				border: 1px solid black
+				width: 90%
+				margin: 5px 5%
+		.nodosRamas
+			width: 100%
+			display: flex
+			flex-flow: row wrap
+			justify-content: flex-start
+			align-items: space-between*/ }
+  .arbol .rama {
+    font-size: 16px;
+    border: 0.5px solid rgba(0, 0, 0, 0.25);
+    margin: 5px;
+    padding: 0;
+    display: inline-block; }
+    .arbol .rama .costo {
+      padding: 5px;
+      color: blue; }
+    .arbol .rama .visita {
+      padding: 5px;
+      color: red; }
+    .arbol .rama .cascoor {
+      display: inline-block;
+      width: 50px;
+      padding: 5px;
+      text-align: center;
+      border: 0.5px solid rgba(0, 0, 0, 0.25); }
+      .arbol .rama .cascoor .buble {
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 15px;
+        display: inline-block;
+        width: 30px;
+        height: 30px; }
+  .arbol .inicial {
+    font-size: 16px;
+    font-weight: bold;
+    border: 0.5px solid rgba(0, 0, 0, 0.25);
+    margin: 5px;
+    padding: 5px;
+    display: inline-block;
+    width: 75px;
+    color: white;
+    background: #c45555;
+    text-align: center; }
+  .arbol .final {
+    font-size: 16px;
+    font-weight: bold;
+    border: 0.5px solid rgba(0, 0, 0, 0.25);
+    margin: 5px;
+    padding: 5px;
+    display: inline-block;
+    width: 75px;
+    color: white;
+    background: #5561c4;
+    text-align: center; }
+  .arbol .actual {
+    font-size: 16px;
+    font-weight: bold;
+    border: 0.5px solid rgba(0, 0, 0, 0.25);
+    margin: 5px 0;
+    padding: 5px;
+    display: inline-block;
+    width: 75px;
+    color: white;
+    background: #55c45a;
+    text-align: center; }

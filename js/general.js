@@ -85,6 +85,13 @@ var left = 4;
     personajes = [];    // Personajes del juego
     personajesCant = 0;
     personajesIndices = 0;
+
+    // Reestablecer arbol
+    origen = null;
+    ramaAct = null;
+    var nodoPeso = [];
+    var visitas = 0;
+    $("#arbol").html("");
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -374,6 +381,13 @@ var left = 4;
         }
       }
     }
+    // Reestablecer arbol
+    origen = null;
+    ramaAct = null;
+    nodoPeso = [];
+    visitas = 0;
+    $("#arbol").html("");
+
     $(document).off("keydown");
 
     $("#spacer").fadeOut(300, function(){
@@ -630,10 +644,10 @@ var left = 4;
       $(document).off("keydown");
 
       $("#spacer").fadeOut(300, function(){
-        var aviso = '<div class="aviso"><h2>Juego terminado: ';
-        for(var a = 0; a < visitados.length; a++){
-          aviso += visitados[a][1] + " > ";
-        }
+        var aviso = '<div class="aviso"><h2>Juego terminado!';
+        //for(var a = 0; a < visitados.length; a++){
+        //  aviso += visitados[a][1] + " > ";
+        //}
         aviso += '</h2></div>';
         $("#spacer").html(aviso);
         $("#spacer").fadeIn(300);
@@ -819,7 +833,9 @@ var left = 4;
       return 0;
     });
 
-    printArbol(ramaAct);                                                        // Pintar el arbol
+    //printArbol(ramaAct);                                                        // Pintar el arbol
+
+    arbol(origen, 5);
   }
 
   function printArbol(ramita){
@@ -838,4 +854,36 @@ var left = 4;
                       }
                     nodoHTML += '</div>';
     cont.html(nodoHTML);
+  }
+
+  function arbol(){
+    $("#arbol").html("");
+    hoja(origen, 0);
+  }
+
+  function hoja(ramas, esp){
+    var espacios = "";
+    for (var i = 0; i < esp; i++){
+      espacios += "&nbsp;";
+    }
+    espacios += "<span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: " + ramas.costo + "</span><span class='visita'>";
+    if(ramas.visita != 0){
+      espacios +=  "Visita: " + ramas.visita;
+    }
+    espacios += "</span></span>";
+    if(ramas.casilla.coordenada == jugando.final.coordenada){
+      espacios += "<span class='final'>Final</span>";
+    }
+    if(ramas.casilla.coordenada == jugando.inicial.coordenada){
+      espacios += "<span class='inicial'>Inicial</span>";
+    }
+    if(ramas.visita == visitas){
+      espacios += "<span class='actual'>Actual</span>";
+    }
+    espacios += "<br>";
+    $("#arbol").append(espacios);
+
+    for (a in ramas.hijos){
+      hoja(ramas.hijos[a], esp+5);
+    }
   }
