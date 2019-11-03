@@ -13,6 +13,8 @@ var numVisita = 0;              // Cantidad de movimientos
 var progreso = false;           // Indica si un juego esta en progreso
 var origen = null;              // Rama de origne del arbol
 var ramaAct = null;             // Rama donde se encuentra el personaje
+var nodoPeso = [];              // Arreglo de coordenadas y costo, sirve para el arbol
+var visitas = 0;                // Visitas realizadas
 
 var up = 1;
 var right = 2;
@@ -45,6 +47,7 @@ var left = 4;
     this.casilla = null;
     this.costo = 0;
     this.lado = 0;             // Lado del nodo padre, Up, Down, Right, Left, Origin
+    this.visita = 0;
   }
 ////////////////////////////////////////////////////////////////////////////////
 //  Reinicio de juego
@@ -440,16 +443,24 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-2, actX-1);
-
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+      var movIt = false;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == up){
           ramaAct = ramaAct.hijos[a];
+          visitas += 1;
+          ramaAct.visita = visitas;
+          movIt = true;
           break;
         }
       }
-      ramasHijas(actY-2, actX-1);
-      // Agregar visita a casilla
-      refresh(visit, picture, nuevaCasVista);
+      if(movIt == false){
+        ramaAct = ramaAct.padre;
+      }
+      else{
+        ramasHijas(actY-2, actX-1);
+      }
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
@@ -475,17 +486,24 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-1, actX);
-
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+      var movIt = false;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == right){
           ramaAct = ramaAct.hijos[a];
+          visitas += 1;
+          ramaAct.visita = visitas;
+          movIt = true;
           break;
         }
       }
-      ramasHijas(actY-1, actX);
-
-      // Agregar visita a casilla
-      refresh(visit, picture, nuevaCasVista);
+      if(movIt == false){
+        ramaAct = ramaAct.padre;
+      }
+      else{
+        ramasHijas(actY-1, actX);
+      }
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
@@ -516,16 +534,24 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY, actX-1);
-
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+      var movIt = false;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == down){
           ramaAct = ramaAct.hijos[a];
+          visitas += 1;
+          ramaAct.visita = visitas;
+          movIt = true;
           break;
         }
       }
-      ramasHijas(actY, actX-1);
-      // Agregar visita a casilla
-      refresh(visit, picture, nuevaCasVista);
+      if(movIt == false){
+        ramaAct = ramaAct.padre;
+      }
+      else{
+        ramasHijas(actY, actX-1);
+      }
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
@@ -551,16 +577,25 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-1, actX-2);
-
+      // Agregar visita a casilla
+      refresh(visit, picture, nuevaCasVista);
+      var movIt = false;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == left){
           ramaAct = ramaAct.hijos[a];
+          visitas += 1;
+          ramaAct.visita = visitas;
+          movIt = true;
           break;
         }
       }
-      ramasHijas(actY-1, actX-2);
-      // Agregar visita a casilla
-      refresh(visit, picture, nuevaCasVista);
+      if(movIt == false){
+        ramaAct = ramaAct.padre;
+      }
+      else{
+        ramasHijas(actY-1, actX-2);
+      }
+
 
       // Mover Eevee de la matriz
       matriz[actY-1][actX-1].actual = false;
@@ -626,12 +661,18 @@ var left = 4;
           initRama.casilla = matriz[i][j];
           initRama.costo = 0;
           initRama.lado = 0;
+          visitas += 1;
+          initRama.visita = visitas;
+
           origen = initRama;
           ramaAct = origen;
 
+          var coorPeso = [ramaAct.casilla.coordenada , ramaAct.costo];
+          nodoPeso.push(coorPeso);
+
           var nodoHTML =  '<div class="nodo" id=rama'+origen.casilla.coordenada+' width="100%">'+
                             '<div class="nodoData">'+
-                              origen.casilla.coordenada+'<br>Visita: ' +$("#"+origen.casilla.coordenada+" .visitados").text()+ '<br>costo: '+ origen.costo +' <br>'+
+                              origen.casilla.coordenada+'<br><p class="visitas">'+origen.visita+'</p><br><p class="costo">'+ origen.costo +'</p><br>'+
                             '</div>'+
                             '<div class="nodosRamas"></div>'+
                           '</div>';
@@ -674,54 +715,101 @@ var left = 4;
 
   }
 
-  function ramasHijas(i, j){
-    if(i > 0 && pisarTerreno(matriz[i-1][j])){                                  // Arriba
-      if($("#"+matriz[i-1][j].coordenada+" .visitados").text() == ""){
+  function ramasHijas(i, j){                                                    // Arriba
+    if(i > 0 && pisarTerreno(matriz[i-1][j])){                                  // Si no excede el mapa
+      if($("#"+matriz[i-1][j].coordenada+" .visitados").text() == ""){          // Si la casilla no ha sido visitada
+        var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i-1][j];
         aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
         aux.lado = up;
         aux.padre = ramaAct;
 
-        ramaAct.hijos.push(aux);
+        for(a in nodoPeso){
+          if(nodoPeso[a][0] == aux.casilla.coordenada){
+            if(nodoPeso[a][1] <= aux.costo){
+              entrada = false;
+            }
+          }
+        }
+        if(entrada == true){
+          var coorPeso = [aux.casilla.coordenada , aux.costo];
+          nodoPeso.push(coorPeso);
+          ramaAct.hijos.push(aux);
+        }
       }
-
     }
     if(j < x-1  && pisarTerreno(matriz[i][j+1])){                               // Derecha
       if($("#"+matriz[i][j+1].coordenada+" .visitados").text() == ""){
+        var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i][j+1];
         aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
         aux.lado = right;
         aux.padre = ramaAct;
 
-        ramaAct.hijos.push(aux);
+        for(a in nodoPeso){
+          if(nodoPeso[a][0] == aux.casilla.coordenada){
+            if(nodoPeso[a][1] <= aux.costo){
+              entrada = false;
+            }
+          }
+        }
+        if(entrada == true){
+          var coorPeso = [aux.casilla.coordenada , aux.costo];
+          nodoPeso.push(coorPeso);
+          ramaAct.hijos.push(aux);
+        }
       }
     }
     if(i < y-1 && pisarTerreno(matriz[i+1][j])){                                // Abajo
       if($("#"+matriz[i+1][j].coordenada+" .visitados").text() == ""){
+        var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i+1][j];
         aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
         aux.lado = down;
         aux.padre = ramaAct;
 
-        ramaAct.hijos.push(aux);
+        for(a in nodoPeso){
+          if(nodoPeso[a][0] == aux.casilla.coordenada){
+            if(nodoPeso[a][1] <= aux.costo){
+              entrada = false;
+            }
+          }
+        }
+        if(entrada == true){
+          var coorPeso = [aux.casilla.coordenada , aux.costo];
+          nodoPeso.push(coorPeso);
+          ramaAct.hijos.push(aux);
+        }
       }
     }
     if(j > 0 && pisarTerreno(matriz[i][j-1])){                                  // Izquierda
-      if($("#"+matriz[i][j-1].coordenada+" .visitados").text() == ""){          
+      if($("#"+matriz[i][j-1].coordenada+" .visitados").text() == ""){
+        var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i][j-1];
         aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
         aux.lado = left;
         aux.padre = ramaAct;
 
-        ramaAct.hijos.push(aux);
+        for(a in nodoPeso){
+          if(nodoPeso[a][0] == aux.casilla.coordenada){
+            if(nodoPeso[a][1] <= aux.costo){
+              entrada = false;
+            }
+          }
+        }
+        if(entrada == true){
+          var coorPeso = [aux.casilla.coordenada , aux.costo];
+          nodoPeso.push(coorPeso);
+          ramaAct.hijos.push(aux);
+        }
       }
     }
 
-    ramaAct.hijos.sort(function (a, b) {
+    ramaAct.hijos.sort(function (a, b) {                                        // Ordenar los nodos segun la configuracion
       if (a.lado > b.lado) {
         return 1;
       }
@@ -731,7 +819,7 @@ var left = 4;
       return 0;
     });
 
-    printArbol(ramaAct);
+    printArbol(ramaAct);                                                        // Pintar el arbol
   }
 
   function printArbol(ramita){
@@ -739,13 +827,13 @@ var left = 4;
     var hijoWidth = (100/ramaAct.hijos.length);
 
     var nodoHTML =  '<div class="nodoData">'+
-                        ramaAct.casilla.coordenada+'<br>Visita: ' +$("#"+ramaAct.casilla.coordenada+" .visitados").text()+ '<br>costo: '+ ramaAct.costo +' <br>'+
+                        ramaAct.casilla.coordenada+'<br><p class="visitas">'+ramaAct.visita+'</p><br><p class="costo">'+ ramaAct.costo +'</p><br><hr>'+
                       '</div>'+
                       '<div class="nodosRamas">';
                       for(a in ramaAct.hijos){
                         nodoHTML += '<div class="nodo" id="rama'+ramaAct.hijos[a].casilla.coordenada+'" style="width: '+hijoWidth+'%;">'+
                                           '<div class="nodoData">'+
-                                            ramaAct.hijos[a].casilla.coordenada+'<br>Visita: ' +$("#"+ramaAct.hijos[a].casilla.coordenada+" .visitados").text()+ '<br>costo: '+ ramaAct.hijos[a].costo +' <br>'+
+                                            ramaAct.hijos[a].casilla.coordenada+'<br><p class="costo">'+ ramaAct.hijos[a].costo +'</p><br>'+
                                           '</div><div class="nodosRamas"></div></div>';
                       }
                     nodoHTML += '</div>';

@@ -351,21 +351,32 @@ main {
   background: black !important; }
 
 .arbol {
-  width: 100%;
-  min-height: 300px; }
+  width: 100%; }
   .arbol .nodo {
     justify-content: center;
     text-align: center;
-    background: lightyellow;
     display: flex;
     flex-flow: wrap row; }
     .arbol .nodo .nodoData {
       width: 100%;
-      padding: 25px;
-      width: 80%;
-      margin: 0 10%;
-      border-bottom: 1px solid black; }
+      padding: 10px;
+      width: 90%;
+      margin: 0 5%;
+      display: flex;
+      flex-flow: column;
+      justify-content: flex-start;
+      align-items: center; }
+      .arbol .nodo .nodoData .visitas {
+        color: red; }
+      .arbol .nodo .nodoData .costo {
+        color: blue; }
+      .arbol .nodo .nodoData hr {
+        border: 1px solid black;
+        width: 90%;
+        margin: 5px 5%; }
     .arbol .nodo .nodosRamas {
       width: 100%;
       display: flex;
-      flex-flow: wrap row; }
+      flex-flow: row wrap;
+      justify-content: flex-start;
+      align-items: space-between; }
