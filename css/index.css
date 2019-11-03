@@ -349,3 +349,23 @@ main {
 
 .desconocido {
   background: black !important; }
+
+.arbol {
+  width: 100%;
+  min-height: 300px; }
+  .arbol .nodo {
+    justify-content: center;
+    text-align: center;
+    background: lightyellow;
+    display: flex;
+    flex-flow: wrap row; }
+    .arbol .nodo .nodoData {
+      width: 100%;
+      padding: 25px;
+      width: 80%;
+      margin: 0 10%;
+      border-bottom: 1px solid black; }
+    .arbol .nodo .nodosRamas {
+      width: 100%;
+      display: flex;
+      flex-flow: wrap row; }

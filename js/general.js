@@ -440,6 +440,14 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-2, actX-1);
+
+      for(a in ramaAct.hijos){
+        if(ramaAct.hijos[a].lado == up){
+          ramaAct = ramaAct.hijos[a];
+          break;
+        }
+      }
+      ramasHijas(actY-2, actX-1);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -467,6 +475,15 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-1, actX);
+
+      for(a in ramaAct.hijos){
+        if(ramaAct.hijos[a].lado == right){
+          ramaAct = ramaAct.hijos[a];
+          break;
+        }
+      }
+      ramasHijas(actY-1, actX);
+
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -499,6 +516,14 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY, actX-1);
+
+      for(a in ramaAct.hijos){
+        if(ramaAct.hijos[a].lado == down){
+          ramaAct = ramaAct.hijos[a];
+          break;
+        }
+      }
+      ramasHijas(actY, actX-1);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -526,6 +551,14 @@ var left = 4;
 
       // Desenmascarar casillas cercanas
       vecino(actY-1, actX-2);
+
+      for(a in ramaAct.hijos){
+        if(ramaAct.hijos[a].lado == left){
+          ramaAct = ramaAct.hijos[a];
+          break;
+        }
+      }
+      ramasHijas(actY-1, actX-2);
       // Agregar visita a casilla
       refresh(visit, picture, nuevaCasVista);
 
@@ -596,6 +629,15 @@ var left = 4;
           origen = initRama;
           ramaAct = origen;
 
+          var nodoHTML =  '<div class="nodo" id=rama'+origen.casilla.coordenada+' width="100%">'+
+                            '<div class="nodoData">'+
+                              origen.casilla.coordenada+'<br>Visita: ' +$("#"+origen.casilla.coordenada+" .visitados").text()+ '<br>costo: '+ origen.costo +' <br>'+
+                            '</div>'+
+                            '<div class="nodosRamas"></div>'+
+                          '</div>';
+
+          $("#arbol").html(nodoHTML);
+
           ramasHijas(i, j);
 
           if(i > 0){                                                            // Casilla superior
@@ -633,50 +675,79 @@ var left = 4;
   }
 
   function ramasHijas(i, j){
-        if(i > 0 && pisarTerreno(matriz[i-1][j])){                                                                  // Arriba
-          var aux = new rama();
-          aux.casilla = matriz[i-1][j];
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
-          aux.lado = up;
-          aux.padre = ramaAct;
+    if(i > 0 && pisarTerreno(matriz[i-1][j])){                                  // Arriba
+      if($("#"+matriz[i-1][j].coordenada+" .visitados").text() == ""){
+        var aux = new rama();
+        aux.casilla = matriz[i-1][j];
+        aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
+        aux.lado = up;
+        aux.padre = ramaAct;
 
-          ramaAct.hijos.push(aux);
-        }
-        if(j < x-1  && pisarTerreno(matriz[i][j+1])){                                                                // Derecha
-          var aux = new rama();
-          aux.casilla = matriz[i][j+1];
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
-          aux.lado = right;
-          aux.padre = ramaAct;
+        ramaAct.hijos.push(aux);
+      }
 
-          ramaAct.hijos.push(aux);
-        }
-        if(i < y-1 && pisarTerreno(matriz[i+1][j])){                                                                // Abajo
-          var aux = new rama();
-          aux.casilla = matriz[i][j-1];
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
-          aux.lado = left;
-          aux.padre = ramaAct;
-
-          ramaAct.hijos.push(aux);
-        }
-        if(j > 0 && pisarTerreno(matriz[i][j-1])){                                                                  // Izquierda
-          var aux = new rama();
-          aux.casilla = matriz[i+1][j];
-          aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
-          aux.lado = down;
-          aux.padre = ramaAct;
-
-          ramaAct.hijos.push(aux);
-        }
-
-        ramaAct.hijos.sort(function (a, b) {
-          if (a.lado > b.lado) {
-            return 1;
-          }
-          if (a.lado < b.lado) {
-            return -1;
-          }
-          return 0;
-        })
     }
+    if(j < x-1  && pisarTerreno(matriz[i][j+1])){                               // Derecha
+      if($("#"+matriz[i][j+1].coordenada+" .visitados").text() == ""){
+        var aux = new rama();
+        aux.casilla = matriz[i][j+1];
+        aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
+        aux.lado = right;
+        aux.padre = ramaAct;
+
+        ramaAct.hijos.push(aux);
+      }
+    }
+    if(i < y-1 && pisarTerreno(matriz[i+1][j])){                                // Abajo
+      if($("#"+matriz[i+1][j].coordenada+" .visitados").text() == ""){
+        var aux = new rama();
+        aux.casilla = matriz[i+1][j];
+        aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
+        aux.lado = down;
+        aux.padre = ramaAct;
+
+        ramaAct.hijos.push(aux);
+      }
+    }
+    if(j > 0 && pisarTerreno(matriz[i][j-1])){                                  // Izquierda
+      if($("#"+matriz[i][j-1].coordenada+" .visitados").text() == ""){          
+        var aux = new rama();
+        aux.casilla = matriz[i][j-1];
+        aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
+        aux.lado = left;
+        aux.padre = ramaAct;
+
+        ramaAct.hijos.push(aux);
+      }
+    }
+
+    ramaAct.hijos.sort(function (a, b) {
+      if (a.lado > b.lado) {
+        return 1;
+      }
+      if (a.lado < b.lado) {
+        return -1;
+      }
+      return 0;
+    });
+
+    printArbol(ramaAct);
+  }
+
+  function printArbol(ramita){
+    var cont = $("#rama"+ramita.casilla.coordenada);
+    var hijoWidth = (100/ramaAct.hijos.length);
+
+    var nodoHTML =  '<div class="nodoData">'+
+                        ramaAct.casilla.coordenada+'<br>Visita: ' +$("#"+ramaAct.casilla.coordenada+" .visitados").text()+ '<br>costo: '+ ramaAct.costo +' <br>'+
+                      '</div>'+
+                      '<div class="nodosRamas">';
+                      for(a in ramaAct.hijos){
+                        nodoHTML += '<div class="nodo" id="rama'+ramaAct.hijos[a].casilla.coordenada+'" style="width: '+hijoWidth+'%;">'+
+                                          '<div class="nodoData">'+
+                                            ramaAct.hijos[a].casilla.coordenada+'<br>Visita: ' +$("#"+ramaAct.hijos[a].casilla.coordenada+" .visitados").text()+ '<br>costo: '+ ramaAct.hijos[a].costo +' <br>'+
+                                          '</div><div class="nodosRamas"></div></div>';
+                      }
+                    nodoHTML += '</div>';
+    cont.html(nodoHTML);
+  }
