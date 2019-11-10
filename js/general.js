@@ -14,7 +14,6 @@ var progreso = false;           // Indica si un juego esta en progreso
 var origen = null;              // Rama de origne del arbol
 var ramaAct = null;             // Rama donde se encuentra el personaje
 var nodoPeso = [];              // Arreglo de coordenadas y costo, sirve para el arbol
-var visitas = 0;                // Visitas realizadas
 
 var up = 1;
 var right = 2;
@@ -47,7 +46,7 @@ var left = 4;
     this.casilla = null;
     this.costo = 0;
     this.lado = 0;             // Lado del nodo padre, Up, Down, Right, Left, Origin
-    this.visita = 0;
+    this.visita = [];
   }
 ////////////////////////////////////////////////////////////////////////////////
 //  Reinicio de juego
@@ -90,7 +89,6 @@ var left = 4;
     origen = null;
     ramaAct = null;
     var nodoPeso = [];
-    var visitas = 0;
     $("#arbol").html("");
   }
 
@@ -385,7 +383,6 @@ var left = 4;
     origen = null;
     ramaAct = null;
     nodoPeso = [];
-    visitas = 0;
     $("#arbol").html("");
 
     $(document).off("keydown");
@@ -463,14 +460,15 @@ var left = 4;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == up){
           ramaAct = ramaAct.hijos[a];
-          visitas += 1;
-          ramaAct.visita = visitas;
+          ramaAct.visita.push(numVisita);
           movIt = true;
           break;
         }
       }
       if(movIt == false){
-        ramaAct = ramaAct.padre;
+        buscaRama(origen, nuevaCas);
+        ramaAct.visita.push(numVisita);
+        ramasHijas(actY-2, actX-1);
       }
       else{
         ramasHijas(actY-2, actX-1);
@@ -506,14 +504,15 @@ var left = 4;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == right){
           ramaAct = ramaAct.hijos[a];
-          visitas += 1;
-          ramaAct.visita = visitas;
+          ramaAct.visita.push(numVisita);
           movIt = true;
           break;
         }
       }
       if(movIt == false){
-        ramaAct = ramaAct.padre;
+        buscaRama(origen, nuevaCas);
+        ramaAct.visita.push(numVisita);
+        ramasHijas(actY-1, actX);
       }
       else{
         ramasHijas(actY-1, actX);
@@ -554,14 +553,15 @@ var left = 4;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == down){
           ramaAct = ramaAct.hijos[a];
-          visitas += 1;
-          ramaAct.visita = visitas;
+          ramaAct.visita.push(numVisita);
           movIt = true;
           break;
         }
       }
       if(movIt == false){
-        ramaAct = ramaAct.padre;
+        buscaRama(origen, nuevaCas);
+        ramaAct.visita.push(numVisita);
+        ramasHijas(actY, actX-1);
       }
       else{
         ramasHijas(actY, actX-1);
@@ -597,14 +597,15 @@ var left = 4;
       for(a in ramaAct.hijos){
         if(ramaAct.hijos[a].lado == left){
           ramaAct = ramaAct.hijos[a];
-          visitas += 1;
-          ramaAct.visita = visitas;
+          ramaAct.visita.push(numVisita);
           movIt = true;
           break;
         }
       }
       if(movIt == false){
-        ramaAct = ramaAct.padre;
+        buscaRama(origen, nuevaCas);
+        ramaAct.visita.push(numVisita);
+        ramasHijas(actY-1, actX-2);
       }
       else{
         ramasHijas(actY-1, actX-2);
@@ -675,8 +676,7 @@ var left = 4;
           initRama.casilla = matriz[i][j];
           initRama.costo = 0;
           initRama.lado = 0;
-          visitas += 1;
-          initRama.visita = visitas;
+          initRama.visita.push(numVisita);
 
           origen = initRama;
           ramaAct = origen;
@@ -838,23 +838,23 @@ var left = 4;
     arbol(origen, 5);
   }
 
-  function printArbol(ramita){
+  /*function printArbol(ramita){
     var cont = $("#rama"+ramita.casilla.coordenada);
     var hijoWidth = (100/ramaAct.hijos.length);
 
     var nodoHTML =  '<div class="nodoData">'+
-                        ramaAct.casilla.coordenada+'<br><p class="visitas">'+ramaAct.visita+'</p><br><p class="costo">'+ ramaAct.costo +'</p><br><hr>'+
-                      '</div>'+
-                      '<div class="nodosRamas">';
-                      for(a in ramaAct.hijos){
-                        nodoHTML += '<div class="nodo" id="rama'+ramaAct.hijos[a].casilla.coordenada+'" style="width: '+hijoWidth+'%;">'+
-                                          '<div class="nodoData">'+
-                                            ramaAct.hijos[a].casilla.coordenada+'<br><p class="costo">'+ ramaAct.hijos[a].costo +'</p><br>'+
-                                          '</div><div class="nodosRamas"></div></div>';
-                      }
-                    nodoHTML += '</div>';
+                        ramaAct.casilla.coordenada+'<br><p class="visitas">';
+
+    nodoHTML += '</p><br><p class="costo">'+ ramaAct.costo +'</p><br><hr></div><div class="nodosRamas">';
+    for(a in ramaAct.hijos){
+      nodoHTML += '<div class="nodo" id="rama'+ramaAct.hijos[a].casilla.coordenada+'" style="width: '+hijoWidth+'%;">'+
+                        '<div class="nodoData">'+
+                          ramaAct.hijos[a].casilla.coordenada+'<br><p class="costo">'+ ramaAct.hijos[a].costo +'</p><br>'+
+                        '</div><div class="nodosRamas"></div></div>';
+    }
+    nodoHTML += '</div>';
     cont.html(nodoHTML);
-  }
+  }*/
 
   function arbol(){
     $("#arbol").html("");
@@ -867,8 +867,11 @@ var left = 4;
       espacios += "&nbsp;";
     }
     espacios += "<span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: " + ramas.costo + "</span><span class='visita'>";
-    if(ramas.visita != 0){
-      espacios +=  "Visita: " + ramas.visita;
+    if(ramas.visita.length != 0){
+      espacios +=  "Visita: ";
+      for(a in ramas.visita){
+        espacios += ramas.visita[a] + ", ";
+      }
     }
     espacios += "</span></span>";
     if(ramas.casilla.coordenada == jugando.final.coordenada){
@@ -877,7 +880,7 @@ var left = 4;
     if(ramas.casilla.coordenada == jugando.inicial.coordenada){
       espacios += "<span class='inicial'>Inicial</span>";
     }
-    if(ramas.visita == visitas){
+    if(ramas.visita[ramas.visita.length-1] == numVisita){
       espacios += "<span class='actual'>Actual</span>";
     }
     espacios += "<br>";
@@ -885,5 +888,15 @@ var left = 4;
 
     for (a in ramas.hijos){
       hoja(ramas.hijos[a], esp+5);
+    }
+  }
+
+  function buscaRama(ramas, nodo){
+
+    if(nodo.coordenada == ramas.casilla.coordenada){
+      ramaAct = ramas;
+    }
+    for (a in ramas.hijos){
+      buscaRama(ramas.hijos[a], nodo);
     }
   }
