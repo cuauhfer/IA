@@ -28,3 +28,33 @@ function costoTerreno(nuevo){
     }
   }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  Distancias (Manhattan y Euclidiana)
+////////////////////////////////////////////////////////////////////////////////
+
+  function disManhattan(){
+    var posY = 0;
+    var posX = 0;
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].final == true){
+          posY = i;
+          posX = j;
+        }
+      }
+    }
+
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        matriz[i][j].manhattan[0] = Math.abs(posY - i);
+        matriz[i][j].manhattan[1] = Math.abs(posX - j);
+        matriz[i][j].manhattan[2] = matriz[i][j].manhattan[0] + matriz[i][j].manhattan[1];
+        suma = Math.pow(matriz[i][j].manhattan[0], 2) + Math.pow(matriz[i][j].manhattan[1], 2);
+        matriz[i][j].euclidiana = Math.sqrt(suma);
+      }
+    }
+
+
+  }

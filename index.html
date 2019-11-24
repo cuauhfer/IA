@@ -22,9 +22,7 @@
       <input id="fileInput" name="fileInput" type="file" size="50" onchange="reset(this.files)">
     </header>
 
-    <div class="spacer" id="spacer">
-
-    </div>
+    <!--<div class="spacer" id="spacer"></div>-->
 
     <main>
       <div class="ajustes" id="ajustes"></div>
@@ -39,9 +37,73 @@
           Visitas: <span id="labVisitas"></span><br>
         </p>
       </div>
-      <div class="player" id="player"></div>
+      <!--<div class="bar" onclick="$('#jugadores').slideToggle();">
+        <span>Personajes <i class="fas fa-chevron-down"></i></span>
+      </div>-->
+      <div class="jugadores" id="jugadores">
+        <div class="player" id="player"></div>
+        <div class="modo" id="modo">
+          <div class="expansion">
+            <h3>Exploración</h3>
+            <label for="arriba">Arriba</label>
+            <select class="" name="arriba" id="arriba" onchange="prioridad()" disabled>
+              <option value="1" selected>1. Primera</option>
+              <option value="2">2. Segunda</option>
+              <option value="3">3. Tercera</option>
+              <option value="4">4. Cuarta</option>
+            </select>
+            <label for="abajo">Abajo</label>
+            <select class="" name="abajo" id="abajo" onchange="prioridad()" disabled>
+              <option value="1">1. Primera</option>
+              <option value="2" selected>2. Segunda</option>
+              <option value="3">3. Tercera</option>
+              <option value="4">4. Cuarta</option>
+            </select>
+            <label for="izquierda">Izquierda</label>
+            <select class="" name="izquierda" id="izquierda" onchange="prioridad()" disabled>
+              <option value="1">1. Primera</option>
+              <option value="2">2. Segunda</option>
+              <option value="3" selected>3. Tercera</option>
+              <option value="4">1. Cuarta</option>
+            </select>
+            <label for="derecha">Derecha</label>
+            <select class="" name="derecha" id="derecha" onchange="prioridad()" disabled>
+              <option value="1">1. Primera</option>
+              <option value="2">2. Segunda</option>
+              <option value="3">3. Tercera</option>
+              <option value="4" selected>4. Cuarta</option>
+            </select>
+          </div>
+          <div class="algoritmo">
+            <h3>Aprendizaje</h3>
+            <label for="algoritmo">Algoritmo de juego: </label>
+            <select class="" name="algoritmo" id="algoritmo" onchange="prioridad()" disabled>
+              <option value="1" selected>Costo uniforme</option>
+              <option value="2">Voraz primero el mejor</option>
+              <option value="3">A*</option>
+            </select>
+            <div class="distancias">
+              <label for="hden">H(n)</label>
+              <select class="" name="hden" id="hden" onchange="prioridad()" disabled>
+                <option value="1" selected>Distancia Manhattan</option>
+                <option value="2">Distancia Euclidiana</option>
+              </select>
+            </div>
+            <label class="minilabel" for="inicial">Casilla inicial</label>
+            <input type="text" name="inicial" id="inicialtxt" value="-" disabled>
+            <label class="minilabel" for="final">Casilla final</label>
+            <input type="text" name="final" id="finaltxt" value="-" disabled>
+          </div>
+        </div>
+      </div>
       <div class="inicio" id="inicio"></div>
+      <!--<div class="bar" onclick="$('#matriz').slideToggle();">
+        <span>Mapa <i class="fas fa-chevron-down"></i></span>
+      </div>-->
       <div class="matriz" id="matriz"></div>
+      <!--<div class="bar" onclick="$('#arbol').slideToggle();">
+        <span>Árbol <i class="fas fa-chevron-down"></i></span>
+      </div>-->
       <div class="arbol" id="arbol"></div>
     </main>
   </body>

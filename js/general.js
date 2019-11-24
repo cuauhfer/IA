@@ -16,9 +16,12 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
 var nodoPeso = [];              // Arreglo de coordenadas y costo, sirve para el arbol
 
 var up = 1;
-var right = 2;
-var down = 3;
-var left = 4;
+var down = 2;
+var left = 3;
+var right = 4;
+
+var algoritmo = 1;              // Algoritmo de busqueda    (1. Costo uniforme, 2. Busqueda voraz, 3. A*)
+var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Euclidiana)
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
 
@@ -29,6 +32,8 @@ var left = 4;
     this.inicial = inicial;         // Booleano
     this.final = final;             // Booleano
     this.actual = actual;           // Booleano
+    this.manhattan = [0, 0, 0];
+    this.euclidiana = 0;
   }
 
   function personaje(id, nombre, terrenos){
@@ -197,6 +202,8 @@ var left = 4;
     if(jugando.inicial != null && jugando.final != null){
       document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
     }
+
+    $('#inicialtxt').val(jugando.inicial.coordenada);
   }
 
   function setFinal(y, x){
@@ -241,6 +248,7 @@ var left = 4;
     if(jugando.inicial != null && jugando.final != null){
       document.getElementById("inicio").innerHTML = '<button type="button" name="button" id="iniciar" onclick="move()"><i class="fas fa-gamepad"></i> Jugar</button>';
     }
+    $('#finaltxt').val(jugando.final.coordenada);
   }
 ////////////////////////////////////////////////////////////////////////////////
 //  Creación de los personajes
@@ -284,10 +292,10 @@ var left = 4;
       newPlayer += "          </div>";
       newPlayer += "        </div>";
 
-
       jugadores.append(newPlayer);
       personajesIndices = personajesIndices + 1;
       personajesCant = personajesCant + 1;
+      $('#modo').css('display', 'flex');
 
       $("#spacer").fadeOut(300, function(){
         var aviso = '<div class="aviso"><h2>Configura tu personaje favorito y seleccionalo</h2></div>';
@@ -303,6 +311,9 @@ var left = 4;
   function deleteCharacter(id){
     document.getElementById("character"+id).outerHTML = "";
     personajesCant = personajesCant - 1;
+    if(personajesCant == 0){
+      $('#modo').css('display', 'none');
+    }
   }
 
   function confirmCharacter(id){
@@ -310,6 +321,16 @@ var left = 4;
     // Limpiar botones del personaje
     $("#select-char"+id).remove();
     $("#delete-char"+id).remove();
+
+    $("#arriba").prop('disabled', false);
+    $("#abajo").prop('disabled', false);
+    $("#izquierda").prop('disabled', false);
+    $("#derecha").prop('disabled', false);
+    $("#algoritmo").prop('disabled', false);
+    $("#hden").prop('disabled', false);
+
+    $("#inicialtxt").val("-");
+    $("#finaltxt").val("-");
 
     // Agregar los terrenos al personaje
     var terrenos = [];
@@ -384,9 +405,10 @@ var left = 4;
     ramaAct = null;
     nodoPeso = [];
     $("#arbol").html("");
-
+    // Eliminar teclas anteriores
     $(document).off("keydown");
 
+    // Mensaje en spacer
     $("#spacer").fadeOut(300, function(){
       var aviso = '<div class="aviso"><h2>Ingresa la posición inicial y final</h2></div>';
       $("#spacer").html(aviso);
@@ -394,10 +416,95 @@ var left = 4;
     });
   }
 
+  function prioridad(){
+    if(parseInt($('#arriba').val()) != up){
+      if($('#arriba').val() == $('#abajo').val()){
+        $('#abajo').val(up);
+        down = up;
+        up = parseInt($('#arriba').val());
+      }
+      if($('#arriba').val() == $('#izquierda').val()){
+        $('#izquierda').val(up);
+        left = up;
+        up = parseInt($('#arriba').val());
+      }
+      if($('#arriba').val() == $('#derecha').val()){
+        $('#derecha').val(up);
+        right = up;
+        up = parseInt($('#arriba').val());
+      }
+    }
+
+    if(parseInt($('#abajo').val()) != down){
+      if($('#abajo').val() == $('#arriba').val()){
+        $('#arriba').val(down);
+        up = down;
+        down = parseInt($('#abajo').val());
+      }
+      if($('#abajo').val() == $('#izquierda').val()){
+        $('#izquierda').val(down);
+        left = down;
+        down = parseInt($('#abajo').val());
+      }
+      if($('#abajo').val() == $('#derecha').val()){
+        $('#derecha').val(down);
+        right = down;
+        down = parseInt($('#abajo').val());
+      }
+    }
+
+    if(parseInt($('#izquierda').val()) != left){
+      if($('#izquierda').val() == $('#abajo').val()){
+        $('#abajo').val(left);
+        down = left;
+        left = parseInt($('#izquierda').val());
+      }
+      if($('#izquierda').val() == $('#arriba').val()){
+        $('#arriba').val(left);
+        up = left;
+        left = parseInt($('#izquierda').val());
+      }
+      if($('#izquierda').val() == $('#derecha').val()){
+        $('#derecha').val(left);
+        right = left;
+        left = parseInt($('#izquierda').val());
+      }
+    }
+
+    if(parseInt($('#derecha').val()) != right){
+      if($('#derecha').val() == $('#abajo').val()){
+        $('#abajo').val(right);
+        down = right;
+        right = parseInt($('#derecha').val());
+      }
+      if($('#derecha').val() == $('#izquierda').val()){
+        $('#izquierda').val(right);
+        left = right;
+        right = parseInt($('#derecha').val());
+      }
+      if($('#derecha').val() == $('#arriba').val()){
+        $('#arriba').val(right);
+        up = right;
+        right = parseInt($('#derecha').val());
+      }
+    }
+
+    if(parseInt($('#algoritmo').val()) != 1){
+      $('.distancias').css('display', 'flex');
+    }
+    if(parseInt($('#algoritmo').val()) == 1){
+      $('.distancias').css('display', 'none');
+    }
+
+    algoritmo = parseInt($('#algoritmo').val());
+    distancia = parseInt($('#hden').val());
+  }
+
 ////////////////////////////////////////////////////////////////////////////////
 //  Juego
 ////////////////////////////////////////////////////////////////////////////////
   function move(){
+    disManhattan();
     progreso = true;
     $("#iniciar").fadeOut();
     $("#iniciar").mouseenter(function(e) {
@@ -406,6 +513,13 @@ var left = 4;
     numVisita = 1;
     visitados.push([numVisita, jugando.actual.coordenada]);
     enmascarar();
+
+    $("#arriba").prop('disabled', true);
+    $("#abajo").prop('disabled', true);
+    $("#izquierda").prop('disabled', true);
+    $("#derecha").prop('disabled', true);
+    $("#algoritmo").prop('disabled', true);
+    $("#hden").prop('disabled', true);
 
   	$(document).on("keydown",(function(event){
   		// 37 < left
@@ -729,7 +843,7 @@ var left = 4;
 
   }
 
-  function ramasHijas(i, j){                                                    // Arriba
+  function ramasHijas(i, j){
     if(i > 0 && pisarTerreno(matriz[i-1][j])){                                  // Si no excede el mapa
       if($("#"+matriz[i-1][j].coordenada+" .visitados").text() == ""){          // Si la casilla no ha sido visitada
         var entrada = true;
@@ -832,29 +946,8 @@ var left = 4;
       }
       return 0;
     });
-
-    //printArbol(ramaAct);                                                        // Pintar el arbol
-
     arbol(origen, 5);
   }
-
-  /*function printArbol(ramita){
-    var cont = $("#rama"+ramita.casilla.coordenada);
-    var hijoWidth = (100/ramaAct.hijos.length);
-
-    var nodoHTML =  '<div class="nodoData">'+
-                        ramaAct.casilla.coordenada+'<br><p class="visitas">';
-
-    nodoHTML += '</p><br><p class="costo">'+ ramaAct.costo +'</p><br><hr></div><div class="nodosRamas">';
-    for(a in ramaAct.hijos){
-      nodoHTML += '<div class="nodo" id="rama'+ramaAct.hijos[a].casilla.coordenada+'" style="width: '+hijoWidth+'%;">'+
-                        '<div class="nodoData">'+
-                          ramaAct.hijos[a].casilla.coordenada+'<br><p class="costo">'+ ramaAct.hijos[a].costo +'</p><br>'+
-                        '</div><div class="nodosRamas"></div></div>';
-    }
-    nodoHTML += '</div>';
-    cont.html(nodoHTML);
-  }*/
 
   function arbol(){
     $("#arbol").html("");
