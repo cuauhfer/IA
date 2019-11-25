@@ -489,10 +489,10 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
       }
     }
 
-    if(parseInt($('#algoritmo').val()) != 1){
+    if(parseInt($('#algoritmo').val()) != 1 && parseInt($('#algoritmo').val()) != 4){
       $('.distancias').css('display', 'flex');
     }
-    if(parseInt($('#algoritmo').val()) == 1){
+    if(parseInt($('#algoritmo').val()) == 1 || parseInt($('#algoritmo').val()) == 4){
       $('.distancias').css('display', 'none');
     }
 
@@ -521,8 +521,9 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     $("#algoritmo").prop('disabled', true);
     $("#hden").prop('disabled', true);
 
-  	$(document).on("keydown",(function(event){
-  		// 37 < left
+    if(algoritmo == 4){
+      $(document).on("keydown",(function(event){
+      // 37 < left
       // 38 ^ Up
       // 39 > right
       // 40 v down
@@ -543,7 +544,9 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
           moveDown();
         }
       }
-  	}));
+    }));
+    }
+
 
     $("#spacer").fadeOut(300, function(){
       var aviso = '<div class="aviso"><h2><i class="fas fa-gamepad"></i> Jugando</h2></div>';
@@ -1031,5 +1034,10 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     vecino(actY-1, actX-1);
     // Agregar visita a casilla
     refresh(visit, picture, nuevaCasVista);
+    // arbol
+    var nuevaCas = matriz[actY-1][actX-1];
+    buscaRama(origen, nuevaCas);
+    ramaAct.visita.push(numVisita);
+    ramasHijas(actY-1, actX-1);
 
   }
