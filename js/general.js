@@ -993,3 +993,43 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
       buscaRama(ramas.hijos[a], nodo);
     }
   }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  Algoritmos heuristicos
+////////////////////////////////////////////////////////////////////////////////
+
+  function deP1aP2(np){
+    var act = jugando.actual.coordenada;
+    numVisita += 1;
+
+    var nuevaCasVista = $("#"+np);
+    var picture = $("#"+act+" #character");
+    var visit = $("#"+np+" .visitados");
+
+    var posOrigen;
+    var posDestino;
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].coordenada == jugando.actual.coordenada){
+          matriz[i][j].actual = false;
+        }
+      }
+    }
+    for(var i = 0; i < matriz.length; i++){
+      for(var j = 0; j < matriz[i].length; j++){
+        if(matriz[i][j].coordenada == np){
+          matriz[i][j].actual = true;
+          jugando.actual = matriz[i][j];
+        }
+      }
+    }
+    var act = jugando.actual.coordenada;
+    var actX = +($("#"+act+" .x").text());
+    var actY = +($("#"+act+" .y").text());
+    // Desenmascarar casillas cercanas
+    vecino(actY-1, actX-1);
+    // Agregar visita a casilla
+    refresh(visit, picture, nuevaCasVista);
+
+  }
