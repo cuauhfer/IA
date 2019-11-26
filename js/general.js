@@ -22,6 +22,9 @@ var right = 4;
 
 var algoritmo = 1;              // Algoritmo de busqueda    (1. Costo uniforme, 2. Busqueda voraz, 3. A*)
 var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Euclidiana)
+var mejorSol = null;
+
+var interHeu;
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
 
@@ -55,6 +58,7 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     this.euclidiana = 0;
     this.lado = 0;             // Lado del nodo padre, Up, Down, Right, Left, Origin
     this.visita = [];
+    this.nivel = 0;
   }
 ////////////////////////////////////////////////////////////////////////////////
 //  Reinicio de juego
@@ -524,6 +528,12 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     $("#algoritmo").prop('disabled', true);
     $("#hden").prop('disabled', true);
 
+    if(algoritmo != 4){
+      mejorSol = origen;
+      // setInterval(function(){ alert("Hello"); }, 3000);
+      interHeu = setInterval(function(){ heuristico(); }, 1500);
+    }
+    // Jugar con modo manual
     if(algoritmo == 4){
       $(document).on("keydown",(function(event){
       // 37 < left
@@ -549,7 +559,6 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
       }
     }));
     }
-
 
     $("#spacer").fadeOut(300, function(){
       var aviso = '<div class="aviso"><h2><i class="fas fa-gamepad"></i> Jugando</h2></div>';
@@ -774,6 +783,7 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         $("#spacer").fadeIn(300);
       });
       $("#spacer").css("height", "auto");
+      clearInterval(interHeu);
     }
   }
 ////////////////////////////////////////////////////////////////////////////////
@@ -1101,6 +1111,8 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     espacios += "<br>";
     $("#arbol").append(espacios);
 
+    ramas.nivel = (esp/5);
+
     for (a in ramas.hijos){
       hoja(ramas.hijos[a], esp+5);
     }
@@ -1119,6 +1131,11 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
 ////////////////////////////////////////////////////////////////////////////////
 //  Algoritmos heuristicos
 ////////////////////////////////////////////////////////////////////////////////
+
+  function heuristico(){
+    mejorRama(origen);
+    deP1aP2(mejorSol.casilla.coordenada);
+  }
 
   function deP1aP2(np){
     var act = jugando.actual.coordenada;
@@ -1158,4 +1175,25 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     ramaAct.visita.push(numVisita);
     ramasHijas(actY-1, actX-1);
 
+  }
+
+  function mejorRama(ramas){
+
+    if(ramas.visita.length == 0){
+      if(mejorSol.visita.length  != 0){
+        mejorSol = ramas;
+      }
+      if(ramas.costo <= mejorSol.costo){
+        if(ramas.costo < mejorSol.costo){
+          mejorSol = ramas;
+        }
+        else if(ramas.costo == mejorSol.costo && ramas.nivel < mejorSol.nivel){
+          mejorSol = ramas;
+        }
+      }
+    }
+
+    for (a in ramas.hijos){
+      mejorRama(ramas.hijos[a]);
+    }
   }
