@@ -50,6 +50,7 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     this.hijos = [];
     this.casilla = null;
     this.costo = 0;
+    this.costoAcumulado = 0;
     this.lado = 0;             // Lado del nodo padre, Up, Down, Right, Left, Origin
     this.visita = [];
   }
@@ -501,7 +502,7 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
   }
 
 ////////////////////////////////////////////////////////////////////////////////
-//  Juego
+//  Juego manual
 ////////////////////////////////////////////////////////////////////////////////
   function move(){
     disManhattan();
@@ -852,7 +853,27 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i-1][j];
-        aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
+        if(algoritmo == 1 || algoritmo == 4){
+          aux.costo = ramaAct.costo + costoTerreno(matriz[i-1][j]);
+        }
+        if(algoritmo == 2){
+          if(distancia == 1){
+            aux.costo = matriz[i-1][j].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costo = matriz[i-1][j].euclidiana;
+          }
+        }
+        if(algoritmo == 3){
+          if(distancia == 1){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i-1][j]);
+            aux.costo = aux.costoAcumulado + matriz[i-1][j].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i-1][j]);
+            aux.costo = aux.costoAcumulado + matriz[i-1][j].euclidiana;
+          }
+        }
         aux.lado = up;
         aux.padre = ramaAct;
 
@@ -875,7 +896,27 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i][j+1];
-        aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
+        if(algoritmo == 1 || algoritmo == 4){
+          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j+1]);
+        }
+        if(algoritmo == 2){
+          if(distancia == 1){
+            aux.costo = matriz[i][j+1].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costo = matriz[i][j+1].euclidiana;
+          }
+        }
+        if(algoritmo == 3){
+          if(distancia == 1){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j+1]);
+            aux.costo = aux.costoAcumulado + matriz[i][j+1].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j+1]);
+            aux.costo = aux.costoAcumulado + matriz[i][j+1].euclidiana;
+          }
+        }
         aux.lado = right;
         aux.padre = ramaAct;
 
@@ -898,7 +939,27 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i+1][j];
-        aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
+        if(algoritmo == 1 || algoritmo == 4){
+          aux.costo = ramaAct.costo + costoTerreno(matriz[i+1][j]);
+        }
+        if(algoritmo == 2){
+          if(distancia == 1){
+            aux.costo = matriz[i+1][j].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costo = matriz[i+1][j].euclidiana;
+          }
+        }
+        if(algoritmo == 3){
+          if(distancia == 1){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i+1][j]);
+            aux.costo = aux.costoAcumulado + matriz[i+1][j].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i+1][j]);
+            aux.costo = aux.costoAcumulado + matriz[i+1][j].euclidiana;
+          }
+        }
         aux.lado = down;
         aux.padre = ramaAct;
 
@@ -921,7 +982,27 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         var entrada = true;
         var aux = new rama();
         aux.casilla = matriz[i][j-1];
-        aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
+        if(algoritmo == 1 || algoritmo == 4){
+          aux.costo = ramaAct.costo + costoTerreno(matriz[i][j-1]);
+        }
+        if(algoritmo == 2){
+          if(distancia == 1){
+            aux.costo = matriz[i][j-1].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costo = matriz[i][j-1].euclidiana;
+          }
+        }
+        if(algoritmo == 3){
+          if(distancia == 1){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j-1]);
+            aux.costo = aux.costoAcumulado + matriz[i][j-1].manhattan[2];
+          }
+          if(distancia == 2){
+            aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j-1]);
+            aux.costo = aux.costoAcumulado + matriz[i][j-1].euclidiana;
+          }
+        }
         aux.lado = left;
         aux.padre = ramaAct;
 
@@ -996,7 +1077,6 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
       buscaRama(ramas.hijos[a], nodo);
     }
   }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Algoritmos heuristicos
