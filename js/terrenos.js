@@ -52,7 +52,7 @@ function costoTerreno(nuevo){
         matriz[i][j].manhattan[1] = Math.abs(posX - j);
         matriz[i][j].manhattan[2] = matriz[i][j].manhattan[0] + matriz[i][j].manhattan[1];
         suma = Math.pow(matriz[i][j].manhattan[0], 2) + Math.pow(matriz[i][j].manhattan[1], 2);
-        matriz[i][j].euclidiana = Math.sqrt(suma);
+        matriz[i][j].euclidiana = Math.sqrt(suma).toFixed(4);
       }
     }
 

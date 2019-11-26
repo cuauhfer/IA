@@ -51,6 +51,8 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     this.casilla = null;
     this.costo = 0;
     this.costoAcumulado = 0;
+    this.manhattan = [0, 0, 0];
+    this.euclidiana = 0;
     this.lado = 0;             // Lado del nodo padre, Up, Down, Right, Left, Origin
     this.visita = [];
   }
@@ -792,7 +794,19 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         if(matriz[i][j].inicial == true){
           var initRama = new rama();
           initRama.casilla = matriz[i][j];
-          initRama.costo = 0;
+          if(algoritmo == 1 || algoritmo == 4){
+            initRama.costo = 0;
+          }
+          if(algoritmo == 2 || algoritmo == 3){
+            if(distancia == 1){
+              initRama.costo = matriz[i][j].manhattan[2];
+            }
+            if(distancia == 2){
+              initRama.costo = matriz[i][j].euclidiana;
+            }
+          }
+          initRama.manhattan = matriz[i][j].manhattan;
+          initRama.euclidiana = matriz[i][j].euclidiana;
           initRama.lado = 0;
           initRama.visita.push(numVisita);
 
@@ -867,13 +881,15 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         if(algoritmo == 3){
           if(distancia == 1){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i-1][j]);
-            aux.costo = aux.costoAcumulado + matriz[i-1][j].manhattan[2];
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i-1][j].manhattan[2]);
           }
           if(distancia == 2){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i-1][j]);
-            aux.costo = aux.costoAcumulado + matriz[i-1][j].euclidiana;
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i-1][j].euclidiana);
           }
         }
+        aux.manhattan = matriz[i-1][j].manhattan;
+        aux.euclidiana = matriz[i-1][j].euclidiana;
         aux.lado = up;
         aux.padre = ramaAct;
 
@@ -910,13 +926,15 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         if(algoritmo == 3){
           if(distancia == 1){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j+1]);
-            aux.costo = aux.costoAcumulado + matriz[i][j+1].manhattan[2];
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i][j+1].manhattan[2]);
           }
           if(distancia == 2){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j+1]);
-            aux.costo = aux.costoAcumulado + matriz[i][j+1].euclidiana;
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i][j+1].euclidiana);
           }
         }
+        aux.manhattan = matriz[i][j+1].manhattan;
+        aux.euclidiana = matriz[i][j+1].euclidiana;
         aux.lado = right;
         aux.padre = ramaAct;
 
@@ -953,13 +971,15 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         if(algoritmo == 3){
           if(distancia == 1){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i+1][j]);
-            aux.costo = aux.costoAcumulado + matriz[i+1][j].manhattan[2];
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i+1][j].manhattan[2]);
           }
           if(distancia == 2){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i+1][j]);
-            aux.costo = aux.costoAcumulado + matriz[i+1][j].euclidiana;
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i+1][j].euclidiana);
           }
         }
+        aux.manhattan = matriz[i+1][j].manhattan;
+        aux.euclidiana = matriz[i+1][j].euclidiana;
         aux.lado = down;
         aux.padre = ramaAct;
 
@@ -996,13 +1016,15 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
         if(algoritmo == 3){
           if(distancia == 1){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j-1]);
-            aux.costo = aux.costoAcumulado + matriz[i][j-1].manhattan[2];
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i][j-1].manhattan[2]);
           }
           if(distancia == 2){
             aux.costoAcumulado = ramaAct.costoAcumulado + costoTerreno(matriz[i][j-1]);
-            aux.costo = aux.costoAcumulado + matriz[i][j-1].euclidiana;
+            aux.costo = parseFloat(aux.costoAcumulado) + parseFloat(matriz[i][j-1].euclidiana);
           }
         }
+        aux.manhattan = matriz[i][j-1].manhattan;
+        aux.euclidiana = matriz[i][j-1].euclidiana;
         aux.lado = left;
         aux.padre = ramaAct;
 
@@ -1043,7 +1065,23 @@ var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Eu
     for (var i = 0; i < esp; i++){
       espacios += "&nbsp;";
     }
-    espacios += "<span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: " + ramas.costo + "</span><span class='visita'>";
+    espacios += "<span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: ";
+    if(algoritmo == 1 || algoritmo == 2 || algoritmo == 4){
+      espacios += ramas.costo;
+    }
+    if(algoritmo == 3){
+      if(distancia == 1){
+        espacios += ramas.costoAcumulado;
+        espacios += " + " + ramas.manhattan[2] + " = ";
+        espacios += ramas.costo;
+      }
+      if(distancia == 2){
+        espacios += ramas.costoAcumulado;
+        espacios += " + " + ramas.euclidiana + " = ";
+        espacios += ramas.costo;
+      }
+    }
+    espacios += "</span><span class='visita'>";
     if(ramas.visita.length != 0){
       espacios +=  "Visita: ";
       for(a in ramas.visita){
