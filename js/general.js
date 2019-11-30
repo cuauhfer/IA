@@ -909,6 +909,11 @@ var interHeu;
             if(nodoPeso[a][1] <= aux.costo){
               entrada = false;
             }
+            else{
+              if(nodoPeso[a][1] != aux.costo){
+                eliminaRama(origen, nodoPeso[a][0]);
+              }
+            }
           }
         }
         if(entrada == true){
@@ -953,6 +958,11 @@ var interHeu;
           if(nodoPeso[a][0] == aux.casilla.coordenada){
             if(nodoPeso[a][1] <= aux.costo){
               entrada = false;
+            }
+            else{
+              if(nodoPeso[a][1] != aux.costo){
+                eliminaRama(origen, nodoPeso[a][0]);
+              }
             }
           }
         }
@@ -999,6 +1009,11 @@ var interHeu;
             if(nodoPeso[a][1] <= aux.costo){
               entrada = false;
             }
+            else{
+              if(nodoPeso[a][1] != aux.costo){
+                eliminaRama(origen, nodoPeso[a][0]);
+              }
+            }
           }
         }
         if(entrada == true){
@@ -1043,6 +1058,11 @@ var interHeu;
           if(nodoPeso[a][0] == aux.casilla.coordenada){
             if(nodoPeso[a][1] <= aux.costo){
               entrada = false;
+            }
+            else{
+              if(nodoPeso[a][1] != aux.costo){
+                eliminaRama(origen, nodoPeso[a][0]);
+              }
             }
           }
         }
@@ -1196,5 +1216,29 @@ var interHeu;
 
     for (a in ramas.hijos){
       mejorRama(ramas.hijos[a]);
+    }
+  }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Eliminar nodos
+////////////////////////////////////////////////////////////////////////////////
+
+  function eliminaRama(ramas, nodo){
+    console.log(nodo);
+    if(nodo == ramas.casilla.coordenada){
+      for(a in nodoPeso){
+        if(nodoPeso[a][0] == nodo){
+          nodoPeso.splice(a, 1);
+        }
+      }
+      ramas = ramas.padre;
+      for(a in ramas.hijos){
+        if(ramas.hijos[a].casilla.coordenada == nodo){
+          ramas.hijos.splice(a, 1);
+        }
+      }
+    }
+    for (a in ramas.hijos){
+      eliminaRama(ramas.hijos[a], nodo);
     }
   }
