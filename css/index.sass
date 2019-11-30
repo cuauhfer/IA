@@ -430,7 +430,7 @@ main
 	transition: transform 0.3s
 	border-style: outset
 	border: 2px solid rgba(0, 0, 0, 0.5)
-	animation-name: bg-pastel
+	animation-name: bg-gold
 	animation-duration: 4s
 	animation-direction: reverse
 	animation-iteration-count: infinite
@@ -443,17 +443,21 @@ main
 		animation-direction: alternate
 		animation-iteration-count: infinite
 
-@keyframes bg-pastel
+@keyframes bg-gold
 	0%
-		background-color: rgba(0, 0, 0, 1)
-	25%
-		background-color: rgba(3, 49, 76, 1)
+		background-color: #efb810
+	20%
+		background-color: #deae34
+	35%
+		background-color: #cda548
 	50%
-		background-color: rgba(24, 78, 122, 1)
-	75%
-		background-color: rgba(3, 49, 76, 1)
+		background-color: #bc9b59
+	65%
+		background-color: #a99267
+	80%
+		background-color: #968974
 	100%
-		background-color: rgba(0, 0, 0, 1)
+		background-color: #808080
 
 @keyframes rotate-icon
 	0%
@@ -463,6 +467,13 @@ main
 
 .desconocido
 	background: rgba(0, 0, 0, 1)!important
+
+.camino
+	background: #efb810!important
+	animation-name: bg-gold!important
+	animation-duration: 1s!important
+	animation-direction: reverse!important
+	animation-iteration-count: infinite!important
 
 .arbol
 	width: 90%

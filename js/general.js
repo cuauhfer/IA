@@ -16,9 +16,9 @@ var ramaAct = null;             // Rama donde se encuentra el personaje
 var nodoPeso = [];              // Arreglo de coordenadas y costo, sirve para el arbol
 
 var up = 1;
-var down = 2;
-var left = 3;
-var right = 4;
+var right = 2;
+var down = 3;
+var left = 4;
 
 var algoritmo = 1;              // Algoritmo de busqueda    (1. Costo uniforme, 2. Busqueda voraz, 3. A*)
 var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Euclidiana)
@@ -364,6 +364,7 @@ var interHeu;
       for(var j = 0; j < matriz[i].length; j++){
         // Restablecer visitados
         $("#"+matriz[i][j].coordenada+" .visitados").html("");
+        $("#"+matriz[i][j].coordenada).removeClass("camino");
         $("#"+matriz[i][j].coordenada).removeClass("desconocido");
         // Reestablecer inicial
         if(matriz[i][j].inicial == true){
@@ -773,17 +774,17 @@ var interHeu;
       alert(jugando.nombre + " ha finalizado su camino!!");
       $(document).off("keydown");
 
-      $("#spacer").fadeOut(300, function(){
-        var aviso = '<div class="aviso"><h2>Juego terminado!';
-        //for(var a = 0; a < visitados.length; a++){
-        //  aviso += visitados[a][1] + " > ";
-        //}
-        aviso += '</h2></div>';
-        $("#spacer").html(aviso);
-        $("#spacer").fadeIn(300);
-      });
-      $("#spacer").css("height", "auto");
       clearInterval(interHeu);
+
+      var ramaCam = new rama();
+
+      ramaCam = ramaAct;
+
+      while(ramaCam.casilla.coordenada != origen.casilla.coordenada){
+        $("#"+ramaCam.casilla.coordenada).addClass("camino");
+        ramaCam = ramaCam.padre;
+      }
+      $("#"+origen.casilla.coordenada).addClass("camino");
     }
   }
 ////////////////////////////////////////////////////////////////////////////////
