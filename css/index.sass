@@ -479,12 +479,24 @@ main
 	width: 90%
 	margin: 0 5%
 	line-height: 30px
+	min-height: 500px
+	.row
+		position: relative
+		i
+			position: absolute
+			left: -30px
+			top: 2px
+			width: 25px
+			display: none
+			font-size: 24px
+			color: gray
 	.rama
 		font-size: 16px
 		border: 0.5px solid rgba(0, 0, 0, 0.25)
 		margin: 5px
 		padding: 0
 		display: inline-block
+		cursor: pointer
 		.costo
 			padding: 5px
 			color: blue
@@ -539,32 +551,3 @@ main
 		color: white
 		background: rgba(85, 196, 90, 1)
 		text-align: center
-
-	/*.nodo
-		justify-content: center
-		text-align: center
-		display: flex
-		flex-flow: wrap row
-		.nodoData
-			width: 100%
-			padding: 10px
-			width: 90%
-			margin: 0 5%
-			display: flex
-			flex-flow: column
-			justify-content: flex-start
-			align-items: center
-			.visitas
-				color: red
-			.costo
-				color: blue
-			hr
-				border: 1px solid black
-				width: 90%
-				margin: 5px 5%
-		.nodosRamas
-			width: 100%
-			display: flex
-			flex-flow: row wrap
-			justify-content: flex-start
-			align-items: space-between*/

@@ -1092,11 +1092,11 @@ var interHeu;
   }
 
   function hoja(ramas, esp){
-    var espacios = "";
+    var espacios = "<div id='rama"+ramas.casilla.coordenada+"' onclick='$(\"#hijos"+ramas.casilla.coordenada+"\").slideToggle(); $(\"#row"+ramas.casilla.coordenada+" i\").slideToggle();'>";
     for (var i = 0; i < esp; i++){
       espacios += "&nbsp;";
     }
-    espacios += "<span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: ";
+    espacios += "<span id='row"+ramas.casilla.coordenada+"' class='row'><i class='fas fa-chevron-down'></i></span><span class='rama'><span class='cascoor' style='background: "+$("#"+ramas.casilla.coordenada).css("background-color")+";'> <span class='buble'>"+ ramas.casilla.coordenada + "</span> </span><span class='costo'> Costo: ";
     if(algoritmo == 1 || algoritmo == 2 || algoritmo == 4){
       espacios += ramas.costo;
     }
@@ -1129,13 +1129,20 @@ var interHeu;
     if(ramas.visita[ramas.visita.length-1] == numVisita){
       espacios += "<span class='actual'>Actual</span>";
     }
-    espacios += "<br>";
-    $("#arbol").append(espacios);
+    espacios += "<br></div><div id='hijos"+ramas.casilla.coordenada+"'></div>";
 
-    ramas.nivel = (esp/5);
+    if($("#arbol").html() == ""){
+      $("#arbol").append(espacios);
+    }
+    else{
+      var coorPadre = ramas.padre.casilla.coordenada;
+      $("#hijos"+coorPadre).append(espacios);
+    }
+
+    ramas.nivel = (esp/11);
 
     for (a in ramas.hijos){
-      hoja(ramas.hijos[a], esp+5);
+      hoja(ramas.hijos[a], esp+11);
     }
   }
 
