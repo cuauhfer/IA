@@ -37,10 +37,10 @@
           Visitas: <span id="labVisitas"></span><br>
         </p>
       </div>
-      <!--<div class="bar" onclick="$('#jugadores').slideToggle();">
-        <span>Personajes <i class="fas fa-chevron-down"></i></span>
-      </div>-->
       <div class="jugadores" id="jugadores">
+        <div class="bar" onclick="$('#player').slideToggle(); $('#modo').slideToggle();">
+          <span>Personajes <i class="fas fa-chevron-down"></i></span>
+        </div>
         <div class="player" id="player"></div>
         <div class="modo" id="modo">
           <div class="expansion">
@@ -98,13 +98,7 @@
         </div>
       </div>
       <div class="inicio" id="inicio"></div>
-      <!--<div class="bar" onclick="$('#matriz').slideToggle();">
-        <span>Mapa <i class="fas fa-chevron-down"></i></span>
-      </div>-->
       <div class="matriz" id="matriz"></div>
-      <!--<div class="bar" onclick="$('#arbol').slideToggle();">
-        <span>Árbol <i class="fas fa-chevron-down"></i></span>
-      </div>-->
       <div class="arbol" id="arbol"></div>
     </main>
   </body>

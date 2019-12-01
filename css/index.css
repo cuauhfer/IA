@@ -306,7 +306,8 @@ main {
           transform: rotate(360deg); }
   main .jugadores {
     width: 90%;
-    margin: 5px auto; }
+    margin: 5px auto;
+    display: none; }
     main .jugadores .modo {
       width: 100%;
       margin: 5px 10px;
@@ -375,14 +376,13 @@ main {
     width: 100%;
     height: 50px;
     margin: 5px auto;
-    background: black;
-    color: white;
     font-size: 26px;
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-start;
     align-items: center;
-    padding: 10px; }
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5); }
 
 .aviso {
   width: 80%;

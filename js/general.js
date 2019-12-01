@@ -302,13 +302,8 @@ var interHeu;
       jugadores.append(newPlayer);
       personajesIndices = personajesIndices + 1;
       personajesCant = personajesCant + 1;
+      $('#jugadores').css('display', 'block');
       $('#modo').css('display', 'flex');
-
-      $("#spacer").fadeOut(300, function(){
-        var aviso = '<div class="aviso"><h2>Configura tu personaje favorito y seleccionalo</h2></div>';
-        $("#spacer").html(aviso);
-        $("#spacer").fadeIn(300);
-      });
     }
     else{
       alert("Máxima cantidad de personajes alcanzada");
@@ -320,6 +315,7 @@ var interHeu;
     personajesCant = personajesCant - 1;
     if(personajesCant == 0){
       $('#modo').css('display', 'none');
+      $('#jugadores').css('display', 'none');
     }
   }
 
