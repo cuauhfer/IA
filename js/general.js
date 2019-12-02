@@ -323,7 +323,7 @@ var interHeu;
 
     // Limpiar botones del personaje
     $("#select-char"+id).remove();
-    $("#delete-char"+id).remove();
+    //$("#delete-char"+id).remove();
 
     $("#arriba").prop('disabled', false);
     $("#abajo").prop('disabled', false);
