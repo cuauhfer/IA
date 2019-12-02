@@ -1234,7 +1234,6 @@ var interHeu;                   // Genera el ciclo de movimiento automatico para
 ////////////////////////////////////////////////////////////////////////////////
 
   function eliminaRama(ramas, nodo){
-    console.log(nodo);
     if(nodo == ramas.casilla.coordenada){
       for(a in nodoPeso){
         if(nodoPeso[a][0] == nodo){

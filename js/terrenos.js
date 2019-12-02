@@ -24,7 +24,7 @@ function costoTerreno(nuevo){
     // Si el ID coincide con el nuevo terreno
     if(nuevo.id == jugando.terrenos[a][0]){
       // Si tiene un peso, entonces aplica
-      return parseInt(jugando.terrenos[a][1]);
+      return parseFloat(jugando.terrenos[a][1]);
     }
   }
 }
@@ -52,7 +52,7 @@ function costoTerreno(nuevo){
         matriz[i][j].manhattan[1] = Math.abs(posX - j);
         matriz[i][j].manhattan[2] = matriz[i][j].manhattan[0] + matriz[i][j].manhattan[1];
         suma = Math.pow(matriz[i][j].manhattan[0], 2) + Math.pow(matriz[i][j].manhattan[1], 2);
-        matriz[i][j].euclidiana = Math.sqrt(suma).toFixed(4);
+        matriz[i][j].euclidiana = Math.sqrt(suma).toFixed(2);
       }
     }
 
