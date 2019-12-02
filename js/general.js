@@ -15,16 +15,16 @@ var origen = null;              // Rama de origne del arbol
 var ramaAct = null;             // Rama donde se encuentra el personaje
 var nodoPeso = [];              // Arreglo de coordenadas y costo, sirve para el arbol
 
-var up = 1;
+var up = 1;                     // Orden de expansión de nodos
 var right = 2;
 var down = 3;
 var left = 4;
 
 var algoritmo = 1;              // Algoritmo de busqueda    (1. Costo uniforme, 2. Busqueda voraz, 3. A*)
 var distancia = 1;              // Distancia para algortimo (1. Manhattan, 2. Euclidiana)
-var mejorSol = null;
+var mejorSol = null;            // Rama que presenta la mejor solución
 
-var interHeu;
+var interHeu;                   // Genera el ciclo de movimiento automatico para los algoritmos heuristicos
 
 //////////////////////////////////////////////////////////////////////////////// Objeto casilla de la matriz
 
@@ -837,10 +837,10 @@ var interHeu;
           if(i > 0){                                                            // Casilla superior
             $("#"+matriz[i-1][j].coordenada).removeClass("desconocido");
           }
-          if(j < y-1){                                                          // Casilla derecha
+          if(j < x-1){                                                          // Casilla derecha
             $("#"+matriz[i][j+1].coordenada).removeClass("desconocido");
           }
-          if(i < x-1){                                                          // Casilla inferior
+          if(i < y-1){                                                          // Casilla inferior
             $("#"+matriz[i+1][j].coordenada).removeClass("desconocido");
           }
           if(j > 0){                                                            // Casilla izquierda
@@ -1157,8 +1157,15 @@ var interHeu;
 ////////////////////////////////////////////////////////////////////////////////
 
   function heuristico(){
+    var mejorSolAnt = mejorSol;
     mejorRama(origen);
-    deP1aP2(mejorSol.casilla.coordenada);
+    if(mejorSolAnt.casilla.coordenada == mejorSol.casilla.coordenada){
+      alert("Se ha finalizado la busqueda sin llegar a una solución, no hay más caminos disponibles");
+      clearInterval(interHeu);
+    }
+    else{
+      deP1aP2(mejorSol.casilla.coordenada);
+    }
   }
 
   function deP1aP2(np){
